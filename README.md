@@ -5,14 +5,20 @@ analysis utilities for plasmonic and nanophotonic structures.
 
 ## Layout
 
-- `asym/`: asymmetric rectangle and related SiO2 simulation studies.
-- `nanodimer/`: nanorod and nanorod-dimer validation, plotting, and Wu-inspired
-  angle-sweep workflows.
-- `diamsweep/`: diameter sweep scripts, reference/object CSV outputs, and
-  reflectivity plots.
-- `Pitchtest/`: pitch sweep scripts, CSV outputs, and resonance plots.
-- `MEEPTESTS/`: small Meep/Fresnel validation tests.
-- `*.ctl`: top-level Meep control files kept from earlier experiments.
+- `simulations/asymmetric-rectangles/`: asymmetric rectangle and related SiO2
+  simulation studies.
+- `simulations/nanodimer/`: nanorod and nanorod-dimer validation, plotting, and
+  Wu-inspired angle-sweep workflows.
+- `simulations/diameter-sweep/`: diameter sweep scripts, reference/object CSV
+  outputs, and reflectivity plots.
+- `simulations/pitch-sweep/`: pitch sweep scripts, CSV outputs, and resonance
+  plots.
+- `simulations/fresnel-tests/`: small Meep/Fresnel validation tests.
+- `simulations/sphere-validation/`: gold sphere validation and Mie comparison
+  scripts/results.
+- `examples/meep-control-files/`: standalone Meep control files kept from
+  earlier experiments.
+- `docs/`: workflow notes and project status documents.
 
 ## Git Policy
 
@@ -29,4 +35,4 @@ outside Git.
 
 The most complete workflow note currently lives at:
 
-- `nanodimer/nanorod_wu_faststart/WU_TO_DESIGN_FLOW.md`
+- `docs/wu-validation-to-design-flow.md`
