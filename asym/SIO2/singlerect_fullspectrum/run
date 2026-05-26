@@ -1,0 +1,10 @@
+nohup bash -c '
+mpirun -np 4 meep-openmpi mode=0 pol=0 shape=0 centered_single.ctl > inc_ex_h.log &&
+mpirun -np 4 meep-openmpi mode=1 pol=0 shape=0 centered_single.ctl > refl_ex_h.log &&
+mpirun -np 4 meep-openmpi mode=0 pol=1 shape=0 centered_single.ctl > inc_ey_h.log &&
+mpirun -np 4 meep-openmpi mode=1 pol=1 shape=0 centered_single.ctl > refl_ey_h.log &&
+mpirun -np 4 meep-openmpi mode=0 pol=0 shape=1 centered_single.ctl > inc_ex_v.log &&
+mpirun -np 4 meep-openmpi mode=1 pol=0 shape=1 centered_single.ctl > refl_ex_v.log &&
+mpirun -np 4 meep-openmpi mode=0 pol=1 shape=1 centered_single.ctl > inc_ey_v.log &&
+mpirun -np 4 meep-openmpi mode=1 pol=1 shape=1 centered_single.ctl > refl_ey_v.log
+' > centered_single_full.out 2>&1 &

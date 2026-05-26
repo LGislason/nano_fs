@@ -1,0 +1,674 @@
+Using MPI version 2.1, 4 processes
+command-line param: mode=1
+command-line param: theta=80
+command-line param: phi=90
+command-line param: res=150
+command-line param: gap=0.010
+command-line param: nbg=1.28
+command-line param: nfreq=81
+command-line param: wvl_min=0.55
+command-line param: wvl_max=0.95
+command-line param: decay_time=30
+command-line param: decay_tol=1e-4
+command-line param: mode=1
+command-line param: theta=80
+command-line param: phi=90
+command-line param: res=150
+command-line param: gap=0.010
+command-line param: nbg=1.28
+command-line param: nfreq=81
+command-line param: wvl_min=0.55
+command-line param: wvl_max=0.95
+command-line param: decay_time=30
+command-line param: decay_tol=1e-4
+-----------
+Initializing structure...
+Working in 3D dimensions.
+Computational cell is 0.8 x 0.8 x 1.2 with resolution 150
+     cylinder, center = (0.0169879,-0.0252454,0)
+          radius 0.012, height 0.045, axis (6.12323e-17, 1, 0)
+          dielectric constant epsilon diagonal = (4.8929,4.8929,4.8929)
+     sphere, center = (0.0169879,-0.00274543,0)
+          radius 0.012
+          dielectric constant epsilon diagonal = (4.8929,4.8929,4.8929)
+     sphere, center = (0.0169879,-0.0477454,0)
+          radius 0.012
+          dielectric constant epsilon diagonal = (4.8929,4.8929,4.8929)
+     cylinder, center = (-0.0169879,0.0252454,0)
+          radius 0.012, height 0.045, axis (-0.984808, 0.173648, 0)
+          dielectric constant epsilon diagonal = (4.8929,4.8929,4.8929)
+     sphere, center = (-0.0391461,0.0291525,0)
+          radius 0.012
+          dielectric constant epsilon diagonal = (4.8929,4.8929,4.8929)
+     sphere, center = (0.00517024,0.0213383,0)
+          radius 0.012
+          dielectric constant epsilon diagonal = (4.8929,4.8929,4.8929)
+command-line param: mode=1
+command-line param: theta=80
+command-line param: phi=90
+command-line param: res=150
+command-line param: gap=0.010
+command-line param: nbg=1.28
+command-line param: nfreq=81
+command-line param: wvl_min=0.55
+command-line param: wvl_max=0.95
+command-line param: decay_time=30
+command-line param: decay_tol=1e-4
+command-line param: mode=1
+command-line param: theta=80
+command-line param: phi=90
+command-line param: res=150
+command-line param: gap=0.010
+command-line param: nbg=1.28
+command-line param: nfreq=81
+command-line param: wvl_min=0.55
+command-line param: wvl_max=0.95
+command-line param: decay_time=30
+command-line param: decay_tol=1e-4
+time for set_epsilon = 4.86573 s
+polarizability: omega=2.6944, gamma=0.620805
+polarizability: omega=2.21039, gamma=0.477063
+polarizability: omega=0.722905, gamma=0.502811
+polarizability: omega=1e-20, gamma=5.31043e-07
+-----------
+on time step 1 (time=0.00333333), 14.2006 s/step
+on time step 35 (time=0.116667), 0.117652 s/step
+on time step 70 (time=0.233333), 0.117572 s/step
+on time step 105 (time=0.35), 0.117623 s/step
+on time step 140 (time=0.466667), 0.117561 s/step
+on time step 175 (time=0.583333), 0.11741 s/step
+on time step 210 (time=0.7), 0.117384 s/step
+on time step 245 (time=0.816667), 0.117198 s/step
+on time step 280 (time=0.933333), 0.117264 s/step
+on time step 315 (time=1.05), 0.11726 s/step
+on time step 350 (time=1.16667), 0.117198 s/step
+on time step 385 (time=1.28333), 0.117433 s/step
+on time step 420 (time=1.4), 0.117401 s/step
+on time step 455 (time=1.51667), 0.117496 s/step
+on time step 490 (time=1.63333), 0.11758 s/step
+on time step 525 (time=1.75), 0.117597 s/step
+on time step 560 (time=1.86667), 0.117584 s/step
+on time step 595 (time=1.98333), 0.117539 s/step
+on time step 630 (time=2.1), 0.117607 s/step
+on time step 665 (time=2.21667), 0.117515 s/step
+on time step 700 (time=2.33333), 0.11751 s/step
+on time step 735 (time=2.45), 0.117346 s/step
+on time step 770 (time=2.56667), 0.117351 s/step
+on time step 805 (time=2.68333), 0.117629 s/step
+on time step 840 (time=2.8), 0.117609 s/step
+on time step 875 (time=2.91667), 0.117619 s/step
+on time step 910 (time=3.03333), 0.117517 s/step
+on time step 945 (time=3.15), 0.117382 s/step
+on time step 980 (time=3.26667), 0.11746 s/step
+on time step 1015 (time=3.38333), 0.117492 s/step
+on time step 1050 (time=3.5), 0.117543 s/step
+on time step 1085 (time=3.61667), 0.117453 s/step
+on time step 1120 (time=3.73333), 0.117487 s/step
+on time step 1155 (time=3.85), 0.117597 s/step
+on time step 1190 (time=3.96667), 0.117609 s/step
+on time step 1225 (time=4.08333), 0.117541 s/step
+on time step 1260 (time=4.2), 0.117424 s/step
+on time step 1295 (time=4.31667), 0.117524 s/step
+on time step 1330 (time=4.43333), 0.117556 s/step
+on time step 1365 (time=4.55), 0.117409 s/step
+on time step 1400 (time=4.66667), 0.117302 s/step
+on time step 1435 (time=4.78333), 0.117036 s/step
+on time step 1470 (time=4.9), 0.117404 s/step
+on time step 1505 (time=5.01667), 0.117453 s/step
+on time step 1540 (time=5.13333), 0.117404 s/step
+on time step 1575 (time=5.25), 0.117498 s/step
+on time step 1610 (time=5.36667), 0.117456 s/step
+on time step 1645 (time=5.48333), 0.117564 s/step
+on time step 1680 (time=5.6), 0.117583 s/step
+on time step 1715 (time=5.71667), 0.117579 s/step
+on time step 1750 (time=5.83333), 0.117472 s/step
+on time step 1785 (time=5.95), 0.117487 s/step
+on time step 1820 (time=6.06667), 0.117469 s/step
+on time step 1855 (time=6.18333), 0.117234 s/step
+on time step 1890 (time=6.3), 0.117261 s/step
+on time step 1925 (time=6.41667), 0.117391 s/step
+on time step 1960 (time=6.53333), 0.117511 s/step
+on time step 1995 (time=6.65), 0.117518 s/step
+on time step 2030 (time=6.76667), 0.117473 s/step
+on time step 2065 (time=6.88333), 0.117441 s/step
+on time step 2100 (time=7), 0.117557 s/step
+on time step 2135 (time=7.11667), 0.117593 s/step
+on time step 2170 (time=7.23333), 0.117583 s/step
+on time step 2205 (time=7.35), 0.117497 s/step
+on time step 2240 (time=7.46667), 0.117462 s/step
+on time step 2275 (time=7.58333), 0.117469 s/step
+on time step 2310 (time=7.7), 0.117553 s/step
+on time step 2345 (time=7.81667), 0.117501 s/step
+on time step 2380 (time=7.93333), 0.117373 s/step
+on time step 2415 (time=8.05), 0.117085 s/step
+on time step 2450 (time=8.16667), 0.117192 s/step
+on time step 2485 (time=8.28333), 0.117413 s/step
+on time step 2520 (time=8.4), 0.117475 s/step
+on time step 2555 (time=8.51667), 0.117512 s/step
+on time step 2590 (time=8.63333), 0.117407 s/step
+on time step 2625 (time=8.75), 0.117497 s/step
+on time step 2659 (time=8.86333), 0.117741 s/step
+on time step 2693 (time=8.97667), 0.117813 s/step
+on time step 2728 (time=9.09333), 0.117558 s/step
+on time step 2763 (time=9.21), 0.117581 s/step
+on time step 2798 (time=9.32667), 0.117607 s/step
+on time step 2833 (time=9.44333), 0.117538 s/step
+on time step 2868 (time=9.56), 0.117491 s/step
+on time step 2903 (time=9.67667), 0.117494 s/step
+on time step 2938 (time=9.79333), 0.117566 s/step
+on time step 2973 (time=9.91), 0.117584 s/step
+on time step 3008 (time=10.0267), 0.117389 s/step
+on time step 3043 (time=10.1433), 0.117396 s/step
+on time step 3078 (time=10.26), 0.11737 s/step
+on time step 3113 (time=10.3767), 0.11739 s/step
+on time step 3148 (time=10.4933), 0.117463 s/step
+on time step 3183 (time=10.61), 0.117576 s/step
+on time step 3218 (time=10.7267), 0.117556 s/step
+on time step 3252 (time=10.84), 0.117662 s/step
+on time step 3287 (time=10.9567), 0.117547 s/step
+on time step 3322 (time=11.0733), 0.117595 s/step
+on time step 3357 (time=11.19), 0.117545 s/step
+on time step 3392 (time=11.3067), 0.117504 s/step
+on time step 3427 (time=11.4233), 0.117515 s/step
+on time step 3462 (time=11.54), 0.117486 s/step
+on time step 3497 (time=11.6567), 0.117551 s/step
+on time step 3532 (time=11.7733), 0.117466 s/step
+on time step 3567 (time=11.89), 0.117397 s/step
+on time step 3602 (time=12.0067), 0.117377 s/step
+on time step 3637 (time=12.1233), 0.117381 s/step
+on time step 3672 (time=12.24), 0.117423 s/step
+on time step 3707 (time=12.3567), 0.117381 s/step
+on time step 3742 (time=12.4733), 0.117511 s/step
+on time step 3777 (time=12.59), 0.117574 s/step
+on time step 3812 (time=12.7067), 0.117559 s/step
+on time step 3847 (time=12.8233), 0.117586 s/step
+on time step 3882 (time=12.94), 0.117485 s/step
+on time step 3917 (time=13.0567), 0.117445 s/step
+on time step 3952 (time=13.1733), 0.117562 s/step
+on time step 3987 (time=13.29), 0.117545 s/step
+on time step 4022 (time=13.4067), 0.117444 s/step
+on time step 4057 (time=13.5233), 0.11718 s/step
+on time step 4092 (time=13.64), 0.116936 s/step
+on time step 4127 (time=13.7567), 0.117187 s/step
+on time step 4162 (time=13.8733), 0.117433 s/step
+on time step 4197 (time=13.99), 0.117441 s/step
+on time step 4232 (time=14.1067), 0.11741 s/step
+on time step 4267 (time=14.2233), 0.117501 s/step
+on time step 4302 (time=14.34), 0.117578 s/step
+on time step 4337 (time=14.4567), 0.117604 s/step
+on time step 4372 (time=14.5733), 0.117586 s/step
+on time step 4407 (time=14.69), 0.117476 s/step
+on time step 4442 (time=14.8067), 0.117569 s/step
+on time step 4477 (time=14.9233), 0.117557 s/step
+on time step 4512 (time=15.04), 0.11754 s/step
+on time step 4547 (time=15.1567), 0.11748 s/step
+on time step 4582 (time=15.2733), 0.117414 s/step
+on time step 4617 (time=15.39), 0.117435 s/step
+on time step 4652 (time=15.5067), 0.117485 s/step
+on time step 4687 (time=15.6233), 0.117502 s/step
+on time step 4722 (time=15.74), 0.117538 s/step
+on time step 4756 (time=15.8533), 0.117653 s/step
+on time step 4790 (time=15.9667), 0.117736 s/step
+on time step 4824 (time=16.08), 0.117666 s/step
+on time step 4859 (time=16.1967), 0.117581 s/step
+on time step 4894 (time=16.3133), 0.11751 s/step
+on time step 4929 (time=16.43), 0.117561 s/step
+on time step 4964 (time=16.5467), 0.117582 s/step
+on time step 4998 (time=16.66), 0.117666 s/step
+on time step 5033 (time=16.7767), 0.117594 s/step
+on time step 5068 (time=16.8933), 0.117522 s/step
+on time step 5103 (time=17.01), 0.117531 s/step
+on time step 5138 (time=17.1267), 0.117566 s/step
+on time step 5173 (time=17.2433), 0.11757 s/step
+on time step 5208 (time=17.36), 0.117519 s/step
+on time step 5243 (time=17.4767), 0.117434 s/step
+on time step 5278 (time=17.5933), 0.117545 s/step
+on time step 5313 (time=17.71), 0.11759 s/step
+on time step 5348 (time=17.8267), 0.117599 s/step
+on time step 5383 (time=17.9433), 0.11748 s/step
+on time step 5418 (time=18.06), 0.117277 s/step
+on time step 5453 (time=18.1767), 0.117363 s/step
+on time step 5488 (time=18.2933), 0.117427 s/step
+on time step 5523 (time=18.41), 0.117462 s/step
+on time step 5558 (time=18.5267), 0.117434 s/step
+on time step 5593 (time=18.6433), 0.117583 s/step
+on time step 5628 (time=18.76), 0.117544 s/step
+on time step 5663 (time=18.8767), 0.117586 s/step
+on time step 5698 (time=18.9933), 0.117517 s/step
+on time step 5733 (time=19.11), 0.117546 s/step
+on time step 5768 (time=19.2267), 0.117537 s/step
+on time step 5803 (time=19.3433), 0.11753 s/step
+on time step 5838 (time=19.46), 0.11752 s/step
+on time step 5873 (time=19.5767), 0.11748 s/step
+on time step 5908 (time=19.6933), 0.117563 s/step
+on time step 5943 (time=19.81), 0.117274 s/step
+on time step 5978 (time=19.9267), 0.117395 s/step
+on time step 6013 (time=20.0433), 0.117382 s/step
+on time step 6047 (time=20.1567), 0.117783 s/step
+on time step 6082 (time=20.2733), 0.117428 s/step
+on time step 6117 (time=20.39), 0.117433 s/step
+on time step 6152 (time=20.5067), 0.117523 s/step
+on time step 6187 (time=20.6233), 0.117534 s/step
+on time step 6222 (time=20.74), 0.117563 s/step
+on time step 6257 (time=20.8567), 0.117548 s/step
+on time step 6292 (time=20.9733), 0.117582 s/step
+on time step 6327 (time=21.09), 0.117515 s/step
+on time step 6362 (time=21.2067), 0.117498 s/step
+on time step 6397 (time=21.3233), 0.117489 s/step
+on time step 6432 (time=21.44), 0.117407 s/step
+on time step 6467 (time=21.5567), 0.117329 s/step
+on time step 6502 (time=21.6733), 0.117336 s/step
+on time step 6537 (time=21.79), 0.117457 s/step
+on time step 6572 (time=21.9067), 0.117621 s/step
+on time step 6606 (time=22.02), 0.117649 s/step
+on time step 6641 (time=22.1367), 0.117571 s/step
+on time step 6676 (time=22.2533), 0.117513 s/step
+on time step 6711 (time=22.37), 0.117438 s/step
+on time step 6746 (time=22.4867), 0.117414 s/step
+on time step 6781 (time=22.6033), 0.117632 s/step
+on time step 6816 (time=22.72), 0.117515 s/step
+on time step 6851 (time=22.8367), 0.117561 s/step
+on time step 6886 (time=22.9533), 0.1176 s/step
+on time step 6921 (time=23.07), 0.117498 s/step
+on time step 6956 (time=23.1867), 0.117475 s/step
+on time step 6991 (time=23.3033), 0.117525 s/step
+on time step 7026 (time=23.42), 0.117498 s/step
+on time step 7061 (time=23.5367), 0.117498 s/step
+on time step 7096 (time=23.6533), 0.117466 s/step
+on time step 7131 (time=23.77), 0.117562 s/step
+on time step 7165 (time=23.8833), 0.117663 s/step
+on time step 7199 (time=23.9967), 0.117682 s/step
+on time step 7233 (time=24.11), 0.117698 s/step
+on time step 7268 (time=24.2267), 0.117523 s/step
+on time step 7303 (time=24.3433), 0.11743 s/step
+on time step 7338 (time=24.46), 0.117468 s/step
+on time step 7373 (time=24.5767), 0.117408 s/step
+on time step 7408 (time=24.6933), 0.117417 s/step
+on time step 7443 (time=24.81), 0.11747 s/step
+on time step 7478 (time=24.9267), 0.117535 s/step
+on time step 7513 (time=25.0433), 0.117526 s/step
+on time step 7548 (time=25.16), 0.117562 s/step
+on time step 7583 (time=25.2767), 0.117556 s/step
+on time step 7618 (time=25.3933), 0.117522 s/step
+on time step 7653 (time=25.51), 0.11753 s/step
+on time step 7688 (time=25.6267), 0.117535 s/step
+on time step 7723 (time=25.7433), 0.117532 s/step
+on time step 7758 (time=25.86), 0.117533 s/step
+on time step 7793 (time=25.9767), 0.117538 s/step
+on time step 7828 (time=26.0933), 0.117412 s/step
+on time step 7863 (time=26.21), 0.117173 s/step
+on time step 7898 (time=26.3267), 0.117413 s/step
+on time step 7933 (time=26.4433), 0.117473 s/step
+on time step 7968 (time=26.56), 0.117465 s/step
+on time step 8003 (time=26.6767), 0.117449 s/step
+on time step 8038 (time=26.7933), 0.117578 s/step
+on time step 8073 (time=26.91), 0.117625 s/step
+on time step 8108 (time=27.0267), 0.117584 s/step
+on time step 8143 (time=27.1433), 0.117569 s/step
+on time step 8178 (time=27.26), 0.117538 s/step
+on time step 8213 (time=27.3767), 0.117562 s/step
+on time step 8248 (time=27.4933), 0.117539 s/step
+on time step 8283 (time=27.61), 0.117442 s/step
+on time step 8318 (time=27.7267), 0.117436 s/step
+on time step 8353 (time=27.8433), 0.117356 s/step
+on time step 8388 (time=27.96), 0.117279 s/step
+on time step 8423 (time=28.0767), 0.117107 s/step
+on time step 8458 (time=28.1933), 0.117021 s/step
+on time step 8493 (time=28.31), 0.117459 s/step
+on time step 8528 (time=28.4267), 0.117523 s/step
+on time step 8563 (time=28.5433), 0.117527 s/step
+on time step 8598 (time=28.66), 0.117489 s/step
+on time step 8633 (time=28.7767), 0.117591 s/step
+on time step 8668 (time=28.8933), 0.117564 s/step
+on time step 8703 (time=29.01), 0.117521 s/step
+on time step 8738 (time=29.1267), 0.117455 s/step
+on time step 8773 (time=29.2433), 0.117552 s/step
+on time step 8808 (time=29.36), 0.117531 s/step
+on time step 8843 (time=29.4767), 0.117549 s/step
+on time step 8878 (time=29.5933), 0.11748 s/step
+on time step 8913 (time=29.71), 0.117495 s/step
+on time step 8948 (time=29.8267), 0.117401 s/step
+on time step 8983 (time=29.9433), 0.117377 s/step
+field decay(t = 30.0033333333333): 0.439944327838293 / 0.439944327838293 = 1.0
+on time step 9018 (time=30.06), 0.117335 s/step
+on time step 9053 (time=30.1767), 0.117461 s/step
+on time step 9088 (time=30.2933), 0.117564 s/step
+on time step 9122 (time=30.4067), 0.117648 s/step
+on time step 9157 (time=30.5233), 0.117564 s/step
+on time step 9192 (time=30.64), 0.117528 s/step
+on time step 9227 (time=30.7567), 0.117514 s/step
+on time step 9262 (time=30.8733), 0.117502 s/step
+on time step 9297 (time=30.99), 0.117541 s/step
+on time step 9331 (time=31.1033), 0.117671 s/step
+on time step 9366 (time=31.22), 0.117596 s/step
+on time step 9400 (time=31.3333), 0.117933 s/step
+on time step 9435 (time=31.45), 0.117594 s/step
+on time step 9470 (time=31.5667), 0.117555 s/step
+on time step 9505 (time=31.6833), 0.117505 s/step
+on time step 9540 (time=31.8), 0.11748 s/step
+on time step 9575 (time=31.9167), 0.117436 s/step
+on time step 9610 (time=32.0333), 0.117539 s/step
+on time step 9645 (time=32.15), 0.117607 s/step
+on time step 9679 (time=32.2633), 0.117691 s/step
+on time step 9714 (time=32.38), 0.117551 s/step
+on time step 9749 (time=32.4967), 0.117314 s/step
+on time step 9784 (time=32.6133), 0.11741 s/step
+on time step 9819 (time=32.73), 0.117531 s/step
+on time step 9854 (time=32.8467), 0.117596 s/step
+on time step 9889 (time=32.9633), 0.117534 s/step
+on time step 9924 (time=33.08), 0.117488 s/step
+on time step 9959 (time=33.1967), 0.117559 s/step
+on time step 9994 (time=33.3133), 0.117583 s/step
+on time step 10029 (time=33.43), 0.117482 s/step
+on time step 10064 (time=33.5467), 0.11741 s/step
+on time step 10099 (time=33.6633), 0.117388 s/step
+on time step 10134 (time=33.78), 0.117546 s/step
+on time step 10168 (time=33.8933), 0.117664 s/step
+on time step 10203 (time=34.01), 0.117587 s/step
+on time step 10238 (time=34.1267), 0.11755 s/step
+on time step 10273 (time=34.2433), 0.117573 s/step
+on time step 10308 (time=34.36), 0.117409 s/step
+on time step 10343 (time=34.4767), 0.117438 s/step
+on time step 10378 (time=34.5933), 0.117602 s/step
+on time step 10413 (time=34.71), 0.117607 s/step
+on time step 10448 (time=34.8267), 0.117593 s/step
+on time step 10483 (time=34.9433), 0.117504 s/step
+on time step 10518 (time=35.06), 0.11755 s/step
+on time step 10553 (time=35.1767), 0.117571 s/step
+on time step 10588 (time=35.2933), 0.117587 s/step
+on time step 10623 (time=35.41), 0.117519 s/step
+on time step 10658 (time=35.5267), 0.117457 s/step
+on time step 10693 (time=35.6433), 0.117535 s/step
+on time step 10728 (time=35.76), 0.117547 s/step
+on time step 10763 (time=35.8767), 0.117557 s/step
+on time step 10798 (time=35.9933), 0.117427 s/step
+on time step 10833 (time=36.11), 0.11727 s/step
+on time step 10868 (time=36.2267), 0.117402 s/step
+on time step 10903 (time=36.3433), 0.11743 s/step
+on time step 10938 (time=36.46), 0.117462 s/step
+on time step 10973 (time=36.5767), 0.117436 s/step
+on time step 11008 (time=36.6933), 0.117421 s/step
+on time step 11043 (time=36.81), 0.117417 s/step
+on time step 11078 (time=36.9267), 0.117419 s/step
+on time step 11113 (time=37.0433), 0.117514 s/step
+on time step 11148 (time=37.16), 0.117452 s/step
+on time step 11183 (time=37.2767), 0.117565 s/step
+on time step 11218 (time=37.3933), 0.117501 s/step
+on time step 11253 (time=37.51), 0.117602 s/step
+on time step 11288 (time=37.6267), 0.117509 s/step
+on time step 11323 (time=37.7433), 0.117412 s/step
+on time step 11358 (time=37.86), 0.117452 s/step
+on time step 11393 (time=37.9767), 0.117437 s/step
+on time step 11428 (time=38.0933), 0.117404 s/step
+on time step 11463 (time=38.21), 0.117465 s/step
+on time step 11498 (time=38.3267), 0.117361 s/step
+on time step 11533 (time=38.4433), 0.117416 s/step
+on time step 11568 (time=38.56), 0.117378 s/step
+on time step 11603 (time=38.6767), 0.117446 s/step
+on time step 11638 (time=38.7933), 0.117331 s/step
+on time step 11673 (time=38.91), 0.117392 s/step
+on time step 11708 (time=39.0267), 0.117579 s/step
+on time step 11743 (time=39.1433), 0.117537 s/step
+on time step 11778 (time=39.26), 0.117549 s/step
+on time step 11813 (time=39.3767), 0.117393 s/step
+on time step 11848 (time=39.4933), 0.117322 s/step
+on time step 11883 (time=39.61), 0.117422 s/step
+on time step 11918 (time=39.7267), 0.117426 s/step
+on time step 11953 (time=39.8433), 0.117366 s/step
+on time step 11988 (time=39.96), 0.117407 s/step
+on time step 12023 (time=40.0767), 0.117506 s/step
+on time step 12058 (time=40.1933), 0.117546 s/step
+on time step 12093 (time=40.31), 0.11763 s/step
+on time step 12128 (time=40.4267), 0.117517 s/step
+on time step 12163 (time=40.5433), 0.11748 s/step
+on time step 12198 (time=40.66), 0.117469 s/step
+on time step 12233 (time=40.7767), 0.117441 s/step
+on time step 12268 (time=40.8933), 0.117375 s/step
+on time step 12303 (time=41.01), 0.11739 s/step
+on time step 12338 (time=41.1267), 0.117397 s/step
+on time step 12373 (time=41.2433), 0.117461 s/step
+on time step 12408 (time=41.36), 0.11749 s/step
+on time step 12443 (time=41.4767), 0.117465 s/step
+on time step 12478 (time=41.5933), 0.117526 s/step
+on time step 12513 (time=41.71), 0.117504 s/step
+on time step 12548 (time=41.8267), 0.117506 s/step
+on time step 12583 (time=41.9433), 0.117365 s/step
+on time step 12618 (time=42.06), 0.117338 s/step
+on time step 12653 (time=42.1767), 0.117432 s/step
+on time step 12688 (time=42.2933), 0.11744 s/step
+on time step 12723 (time=42.41), 0.117465 s/step
+on time step 12757 (time=42.5233), 0.117682 s/step
+on time step 12792 (time=42.64), 0.117489 s/step
+on time step 12827 (time=42.7567), 0.117499 s/step
+on time step 12862 (time=42.8733), 0.117435 s/step
+on time step 12897 (time=42.99), 0.11753 s/step
+on time step 12932 (time=43.1067), 0.117453 s/step
+on time step 12967 (time=43.2233), 0.1175 s/step
+on time step 13002 (time=43.34), 0.117489 s/step
+on time step 13037 (time=43.4567), 0.117448 s/step
+on time step 13072 (time=43.5733), 0.117392 s/step
+on time step 13107 (time=43.69), 0.117375 s/step
+on time step 13142 (time=43.8067), 0.117398 s/step
+on time step 13177 (time=43.9233), 0.117379 s/step
+on time step 13212 (time=44.04), 0.117392 s/step
+on time step 13247 (time=44.1567), 0.117341 s/step
+on time step 13282 (time=44.2733), 0.117404 s/step
+on time step 13317 (time=44.39), 0.117403 s/step
+on time step 13352 (time=44.5067), 0.117473 s/step
+on time step 13387 (time=44.6233), 0.117594 s/step
+on time step 13422 (time=44.74), 0.117413 s/step
+on time step 13457 (time=44.8567), 0.117471 s/step
+on time step 13492 (time=44.9733), 0.117469 s/step
+on time step 13527 (time=45.09), 0.117431 s/step
+on time step 13562 (time=45.2067), 0.117417 s/step
+on time step 13597 (time=45.3233), 0.117393 s/step
+on time step 13632 (time=45.44), 0.117415 s/step
+on time step 13667 (time=45.5567), 0.11742 s/step
+on time step 13702 (time=45.6733), 0.117454 s/step
+on time step 13737 (time=45.79), 0.117353 s/step
+on time step 13772 (time=45.9067), 0.117425 s/step
+on time step 13807 (time=46.0233), 0.117476 s/step
+on time step 13842 (time=46.14), 0.117427 s/step
+on time step 13877 (time=46.2567), 0.117419 s/step
+on time step 13912 (time=46.3733), 0.117582 s/step
+on time step 13947 (time=46.49), 0.117576 s/step
+on time step 13982 (time=46.6067), 0.117572 s/step
+on time step 14017 (time=46.7233), 0.117465 s/step
+on time step 14052 (time=46.84), 0.117457 s/step
+on time step 14087 (time=46.9567), 0.117303 s/step
+on time step 14122 (time=47.0733), 0.117378 s/step
+on time step 14157 (time=47.19), 0.117377 s/step
+on time step 14192 (time=47.3067), 0.117268 s/step
+on time step 14227 (time=47.4233), 0.11729 s/step
+on time step 14262 (time=47.54), 0.117313 s/step
+on time step 14297 (time=47.6567), 0.117415 s/step
+on time step 14332 (time=47.7733), 0.117318 s/step
+on time step 14367 (time=47.89), 0.117407 s/step
+on time step 14402 (time=48.0067), 0.117551 s/step
+on time step 14436 (time=48.12), 0.117663 s/step
+on time step 14471 (time=48.2367), 0.117626 s/step
+on time step 14506 (time=48.3533), 0.117522 s/step
+on time step 14541 (time=48.47), 0.117459 s/step
+on time step 14576 (time=48.5867), 0.117512 s/step
+on time step 14611 (time=48.7033), 0.117539 s/step
+on time step 14646 (time=48.82), 0.117509 s/step
+on time step 14681 (time=48.9367), 0.117498 s/step
+on time step 14716 (time=49.0533), 0.117535 s/step
+on time step 14751 (time=49.17), 0.117585 s/step
+on time step 14786 (time=49.2867), 0.117357 s/step
+on time step 14821 (time=49.4033), 0.117348 s/step
+on time step 14856 (time=49.52), 0.117381 s/step
+on time step 14891 (time=49.6367), 0.117363 s/step
+on time step 14926 (time=49.7533), 0.117631 s/step
+on time step 14960 (time=49.8667), 0.117693 s/step
+on time step 14994 (time=49.98), 0.117652 s/step
+on time step 15029 (time=50.0967), 0.117566 s/step
+on time step 15064 (time=50.2133), 0.117469 s/step
+on time step 15099 (time=50.33), 0.117521 s/step
+on time step 15134 (time=50.4467), 0.11752 s/step
+on time step 15169 (time=50.5633), 0.117597 s/step
+on time step 15204 (time=50.68), 0.117578 s/step
+on time step 15239 (time=50.7967), 0.117553 s/step
+on time step 15274 (time=50.9133), 0.117567 s/step
+on time step 15309 (time=51.03), 0.117554 s/step
+on time step 15344 (time=51.1467), 0.117541 s/step
+on time step 15379 (time=51.2633), 0.117536 s/step
+on time step 15414 (time=51.38), 0.117464 s/step
+on time step 15449 (time=51.4967), 0.117502 s/step
+on time step 15484 (time=51.6133), 0.117529 s/step
+on time step 15519 (time=51.73), 0.117568 s/step
+on time step 15554 (time=51.8467), 0.117589 s/step
+on time step 15589 (time=51.9633), 0.117535 s/step
+on time step 15624 (time=52.08), 0.11748 s/step
+on time step 15659 (time=52.1967), 0.117432 s/step
+on time step 15694 (time=52.3133), 0.117414 s/step
+on time step 15729 (time=52.43), 0.117435 s/step
+on time step 15764 (time=52.5467), 0.117479 s/step
+on time step 15799 (time=52.6633), 0.117495 s/step
+on time step 15834 (time=52.78), 0.117558 s/step
+on time step 15869 (time=52.8967), 0.11752 s/step
+on time step 15904 (time=53.0133), 0.117567 s/step
+on time step 15939 (time=53.13), 0.117558 s/step
+on time step 15974 (time=53.2467), 0.117521 s/step
+on time step 16009 (time=53.3633), 0.117521 s/step
+on time step 16044 (time=53.48), 0.117418 s/step
+on time step 16079 (time=53.5967), 0.117409 s/step
+on time step 16113 (time=53.71), 0.117783 s/step
+on time step 16148 (time=53.8267), 0.11751 s/step
+on time step 16183 (time=53.9433), 0.117568 s/step
+on time step 16218 (time=54.06), 0.11744 s/step
+on time step 16253 (time=54.1767), 0.117384 s/step
+on time step 16288 (time=54.2933), 0.117428 s/step
+on time step 16323 (time=54.41), 0.117456 s/step
+on time step 16358 (time=54.5267), 0.117513 s/step
+on time step 16393 (time=54.6433), 0.117396 s/step
+on time step 16428 (time=54.76), 0.117529 s/step
+on time step 16462 (time=54.8733), 0.117649 s/step
+on time step 16497 (time=54.99), 0.117561 s/step
+on time step 16532 (time=55.1067), 0.117505 s/step
+on time step 16567 (time=55.2233), 0.117408 s/step
+on time step 16602 (time=55.34), 0.117341 s/step
+on time step 16637 (time=55.4567), 0.117397 s/step
+on time step 16672 (time=55.5733), 0.117464 s/step
+on time step 16707 (time=55.69), 0.117625 s/step
+on time step 16742 (time=55.8067), 0.117533 s/step
+on time step 16777 (time=55.9233), 0.117439 s/step
+on time step 16812 (time=56.04), 0.117485 s/step
+on time step 16847 (time=56.1567), 0.117436 s/step
+on time step 16882 (time=56.2733), 0.117373 s/step
+on time step 16917 (time=56.39), 0.117294 s/step
+on time step 16952 (time=56.5067), 0.117373 s/step
+on time step 16987 (time=56.6233), 0.117406 s/step
+on time step 17022 (time=56.74), 0.117486 s/step
+on time step 17057 (time=56.8567), 0.117523 s/step
+on time step 17092 (time=56.9733), 0.117411 s/step
+on time step 17127 (time=57.09), 0.117495 s/step
+on time step 17162 (time=57.2067), 0.117607 s/step
+on time step 17197 (time=57.3233), 0.11749 s/step
+on time step 17232 (time=57.44), 0.117554 s/step
+on time step 17267 (time=57.5567), 0.117438 s/step
+on time step 17302 (time=57.6733), 0.117516 s/step
+on time step 17337 (time=57.79), 0.117555 s/step
+on time step 17372 (time=57.9067), 0.117508 s/step
+on time step 17407 (time=58.0233), 0.11755 s/step
+on time step 17442 (time=58.14), 0.117548 s/step
+on time step 17477 (time=58.2567), 0.117432 s/step
+on time step 17512 (time=58.3733), 0.117344 s/step
+on time step 17547 (time=58.49), 0.117404 s/step
+on time step 17582 (time=58.6067), 0.117406 s/step
+on time step 17617 (time=58.7233), 0.117408 s/step
+on time step 17652 (time=58.84), 0.117431 s/step
+on time step 17687 (time=58.9567), 0.117496 s/step
+on time step 17722 (time=59.0733), 0.117556 s/step
+on time step 17757 (time=59.19), 0.117544 s/step
+on time step 17792 (time=59.3067), 0.117506 s/step
+on time step 17827 (time=59.4233), 0.117545 s/step
+on time step 17862 (time=59.54), 0.117563 s/step
+on time step 17897 (time=59.6567), 0.117526 s/step
+on time step 17932 (time=59.7733), 0.117546 s/step
+on time step 17967 (time=59.89), 0.11762 s/step
+field decay(t = 60.0066666666667): 1.05255347236589e-5 / 0.439944327838293 = 2.39246969619477e-5
+run 0 finished at t = 60.0066666666667 (18002 timesteps)
+flux1:, 1.05263157894737, 1.49031559833374e-11, -1.47120965756112e-11
+flux1:, 1.0622009569378, 2.80541597864303e-11, -2.77082314957901e-11
+flux1:, 1.07177033492823, 5.17117195280771e-11, -5.10963171737908e-11
+flux1:, 1.08133971291866, 9.52071618958449e-11, -9.41205616223781e-11
+flux1:, 1.09090909090909, 1.72499897035809e-10, -1.70609791053855e-10
+flux1:, 1.10047846889952, 3.11357548365143e-10, -3.08098521078239e-10
+flux1:, 1.11004784688995, 5.54916076498867e-10, -5.49370101006016e-10
+flux1:, 1.11961722488038, 9.84257567407071e-10, -9.74906677769221e-10
+flux1:, 1.12918660287081, 1.72830298116518e-9, -1.71272224306275e-9
+flux1:, 1.13875598086124, 3.02060734988627e-9, -2.9948834483603e-9
+flux1:, 1.14832535885168, 5.23901690409543e-9, -5.196993612386e-9
+flux1:, 1.15789473684211, 9.05377623034558e-9, -8.98571701706367e-9
+flux1:, 1.16746411483254, 1.55685432366448e-8, -1.54593406855596e-8
+flux1:, 1.17703349282297, 2.67286218515472e-8, -2.65547555409136e-8
+flux1:, 1.1866028708134, 4.58114506980763e-8, -4.55367977516404e-8
+flux1:, 1.19617224880383, 7.86419541538703e-8, -7.82109108405649e-8
+flux1:, 1.20574162679426, 1.35338727873628e-7, -1.34666580393866e-7
+flux1:, 1.21531100478469, 2.34248728424126e-7, -2.33206568032791e-7
+flux1:, 1.22488038277512, 4.08248833470988e-7, -4.06643605081608e-7
+flux1:, 1.23444976076555, 7.17486743417961e-7, -7.15036414799122e-7
+flux1:, 1.24401913875598, 1.26724407255278e-6, -1.26356674672432e-6
+flux1:, 1.25358851674641, 2.22466076987538e-6, -2.21933468705792e-6
+flux1:, 1.26315789473684, 3.7673244729548e-6, -3.76017765162805e-6
+flux1:, 1.27272727272727, 5.82978629954079e-6, -5.82153057196848e-6
+flux1:, 1.2822966507177, 7.75099024874201e-6, -7.7435479097654e-6
+flux1:, 1.29186602870814, 8.72960639970691e-6, -8.72489367566333e-6
+flux1:, 1.30143540669857, 8.7699246066443e-6, -8.76844399195478e-6
+flux1:, 1.311004784689, 8.43319840351929e-6, -8.43437053400071e-6
+flux1:, 1.32057416267943, 8.1585696155086e-6, -8.16161557416141e-6
+flux1:, 1.33014354066986, 8.16177935922775e-6, -8.16616367212734e-6
+flux1:, 1.33971291866029, 8.53670934186559e-6, -8.54231928381961e-6
+flux1:, 1.34928229665072, 9.28981523475636e-6, -9.29714708362889e-6
+flux1:, 1.35885167464115, 1.02404654452933e-5, -1.02507327606034e-5
+flux1:, 1.36842105263158, 1.09303074741636e-5, -1.09449895254038e-5
+flux1:, 1.37799043062201, 1.09259961992456e-5, -1.09456807968621e-5
+flux1:, 1.38755980861244, 1.02596186270724e-5, -1.02836119377678e-5
+flux1:, 1.39712918660287, 9.1209676098691e-6, -9.14783937562697e-6
+flux1:, 1.4066985645933, 7.63680287149468e-6, -7.66461142767528e-6
+flux1:, 1.41626794258373, 6.07422701677977e-6, -6.10104287024671e-6
+flux1:, 1.42583732057416, 4.69957396136285e-6, -4.72416200922178e-6
+flux1:, 1.4354066985646, 3.61886404718962e-6, -3.64079201066902e-6
+flux1:, 1.44497607655503, 2.82640459517742e-6, -2.84585173298155e-6
+flux1:, 1.45454545454546, 2.28670996312877e-6, -2.30427451971528e-6
+flux1:, 1.46411483253589, 1.97253521249681e-6, -1.98898630445018e-6
+flux1:, 1.47368421052632, 1.86927036327418e-6, -1.88509232604138e-6
+flux1:, 1.48325358851675, 1.96106210505287e-6, -1.97615137899839e-6
+flux1:, 1.49282296650718, 2.20714640454136e-6, -2.22135311500091e-6
+flux1:, 1.50239234449761, 2.5003311584541e-6, -2.51412285975089e-6
+flux1:, 1.51196172248804, 2.66123367115996e-6, -2.67522379317643e-6
+flux1:, 1.52153110047847, 2.55537425553746e-6, -2.56940486715689e-6
+flux1:, 1.5311004784689, 2.21823203426504e-6, -2.23144135961739e-6
+flux1:, 1.54066985645933, 1.79241572995823e-6, -1.80403684466878e-6
+flux1:, 1.55023923444976, 1.39404481272345e-6, -1.40380594771579e-6
+flux1:, 1.55980861244019, 1.07030197299821e-6, -1.07831162139756e-6
+flux1:, 1.56937799043062, 8.22710379442018e-7, -8.29230995687462e-7
+flux1:, 1.57894736842106, 6.34883600706914e-7, -6.40181158172978e-7
+flux1:, 1.58851674641149, 4.89202092540893e-7, -4.93478775506636e-7
+flux1:, 1.59808612440192, 3.73731594130022e-7, -3.7713046134138e-7
+flux1:, 1.60765550239235, 2.82143315486393e-7, -2.84782176343368e-7
+flux1:, 1.61722488038278, 2.10600639818536e-7, -2.1259518574077e-7
+flux1:, 1.62679425837321, 1.56012665761765e-7, -1.57479880236629e-7
+flux1:, 1.63636363636364, 1.15331513376691e-7, -1.16384560834533e-7
+flux1:, 1.64593301435407, 8.54890397397055e-8, -8.62303333382028e-8
+flux1:, 1.6555023923445, 6.35692294642011e-8, -6.40849096209763e-8
+flux1:, 1.66507177033493, 4.72130058134503e-8, -4.75699411542543e-8
+flux1:, 1.67464114832536, 3.47585269852388e-8, -3.50049941504073e-8
+flux1:, 1.68421052631579, 2.52073165978512e-8, -2.53764014944593e-8
+flux1:, 1.69377990430622, 1.7941322337467e-8, -1.80554978084294e-8
+flux1:, 1.70334928229665, 1.25292754709949e-8, -1.26042821189258e-8
+flux1:, 1.71291866028708, 8.59140350890225e-9, -8.63880729794754e-9
+flux1:, 1.72248803827752, 5.79750465013801e-9, -5.82600020044077e-9
+flux1:, 1.73205741626795, 3.85457386691871e-9, -3.87065010903701e-9
+flux1:, 1.74162679425838, 2.53045118191234e-9, -2.53876248424144e-9
+flux1:, 1.75119617224881, 1.64163938636291e-9, -1.64537441733242e-9
+flux1:, 1.76076555023924, 1.05592846735421e-9, -1.0571571976384e-9
+flux1:, 1.77033492822967, 6.74501466392594e-10, -6.744970902862e-10
+flux1:, 1.7799043062201, 4.29749103898051e-10, -4.29244932950985e-10
+flux1:, 1.78947368421053, 2.73180104074934e-10, -2.72562582434078e-10
+flux1:, 1.79904306220096, 1.73845348198325e-10, -1.73292623678728e-10
+flux1:, 1.80861244019139, 1.1041619480252e-10, -1.09988264280661e-10
+flux1:, 1.81818181818182, 7.01761137844664e-11, -6.9875787121577e-11
+
+Elapsed run time = 2134.92 s

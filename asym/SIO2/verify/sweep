@@ -1,0 +1,6 @@
+nohup bash -c '
+mpirun -np 4 meep-openmpi mode=0 pol=0 asym_param.ctl > inc_ex.log &&
+mpirun -np 4 meep-openmpi mode=1 pol=0 asym_param.ctl > refl_ex.log &&
+mpirun -np 4 meep-openmpi mode=0 pol=1 asym_param.ctl > inc_ey.log &&
+mpirun -np 4 meep-openmpi mode=1 pol=1 asym_param.ctl > refl_ey.log
+' > full_run.out 2>&1 &

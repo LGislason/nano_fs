@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mpirun meep-openmpi empty?=true refl-quartz.ctl |tee flux0.out
+grep flux1: flux0.out |cut -d , -f2- > flux0.dat
+
+mpirun meep-openmpi empty?=false refl-quartz.ctl |tee flux.out
+grep flux1: flux.out |cut -d , -f2- > flux.dat

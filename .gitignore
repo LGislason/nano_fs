@@ -1,0 +1,24 @@
+# macOS/editor noise
+.DS_Store
+*.swp
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Matplotlib/local runtime config
+.mplconfig/
+
+# Meep/FDTD generated outputs
+*.h5
+*.out
+*.log
+
+# Common generated result directories
+results/
+bad_results/
+
+# Large/generated analysis artifacts can be regenerated from scripts and data.
+# Keep small CSV/TXT/PNG files tracked when they are useful reference outputs.
