@@ -1,4 +1,4 @@
-# SDSMT Simulation Workspace
+# SDSMT Nano-FS Simulation Workspace
 
 This repository contains Meep/FDTD simulation scripts, control files, and
 analysis utilities for plasmonic and nanophotonic structures.
