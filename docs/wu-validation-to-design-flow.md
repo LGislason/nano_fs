@@ -57,8 +57,14 @@ python3 analyze_phi_sweep.py \
   --input-dir results_wu_phi_res200_gap10 \
   --theta 80 \
   --quantity backscatter \
-  --modes 0.672 0.853
+  --modes 0.672 0.950 \
+  --window 0.04
 ```
+
+For the refined `RES=300`, `GAP=6 nm` run, the useful long-wavelength angular
+feature appears closer to `0.950 um` than `0.853 um`. Treat `0.853 um` as a
+poor probe for this simplified model unless a later geometry or illumination
+change moves the second feature back into that window.
 
 ## 3. Pass Criteria
 
@@ -68,6 +74,8 @@ Treat the model as good enough for a Wu-inspired baseline if:
 - The two modal intensities vary strongly with `phi`.
 - One mode strengthens while the other weakens over part of the sweep.
 - The cosine-squared-family fit has a useful trend, roughly `R2 > 0.7`.
+- If a nominal literature mode gives a poor fit, inspect the stacked spectra
+  and move the probe to the simulated peak before changing flux monitors.
 
 If the fit is poor but the spectra clearly move with angle, the model is still
 useful for design exploration, but it is not a strong Wu reproduction.

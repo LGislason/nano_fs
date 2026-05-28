@@ -170,13 +170,13 @@ def main() -> None:
         "--modes",
         type=float,
         nargs="+",
-        default=[0.672, 0.853],
+        default=[0.672, 0.950],
         help="Mode probe wavelengths in microns.",
     )
     parser.add_argument(
         "--window",
         type=float,
-        default=0.025,
+        default=0.04,
         help="Half-width around each mode wavelength for local peak extraction.",
     )
     args = parser.parse_args()
