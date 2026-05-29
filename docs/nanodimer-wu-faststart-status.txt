@@ -4,216 +4,205 @@ Nanodimer Simulation Status and Next Steps
 Current Status
 --------------
 
-This directory now contains a working Meep-based nanorod dimer workflow. The
-original run was invalid because the simulation cell and PML geometry left
-essentially no usable monitor area, which produced near-zero reference flux and
-unphysical huge case fluxes. That was fixed by increasing the transverse cell
-size, reducing PML thickness, and checking that the reference transmission is
-finite.
+The repository now has a working Meep/Scheme workflow for qualitative nanorod
+dimer exploration on the cluster. The current model is still intentionally
+simplified:
 
-The current validated workflow can:
+- homogeneous background medium, n = 1.28
+- normal-incidence source
+- fixed Ex polarization by default
+- capsule-like Au nanorods, 69 x 24 nm
+- no substrate
+- no dark-field collection model
+- flux-plane proxy spectra, not rigorous scattering cross sections
 
-- Run a homogeneous reference simulation.
-- Run nanorod dimer cases with parameterized theta, phi, gap, resolution, and
-  spectral sampling.
-- Subtract the reference flux.
-- Plot normalized backscatter-like and extinction-like proxy spectra.
-- Generate stacked spectra similar in style to the Wu et al. figures.
+The earlier invalid cell/PML setup was fixed. Reference fluxes are finite, and
+the broadband sweep pipeline now produces physically usable qualitative trends.
 
-Important interpretation note:
 
-The current plots are normalized flux-plane proxies, not rigorous scattering
-cross sections. Specifically:
+Important Interpretation
+------------------------
+
+The plotted spectra are normalized flux-plane proxies:
 
 - backscatter proxy = reflected flux / |incident transmitted flux|
 - extinction-like proxy = -transmitted differential flux / |incident transmitted flux|
 
-This is good enough for workflow verification and qualitative trend finding,
-but it is not a full dark-field scattering cross-section reproduction.
+These are useful for trend finding, mode tracking, and design iteration. They
+should not be presented as paper-grade dark-field scattering cross sections.
 
 
-Results So Far
---------------
+Most Relevant Results So Far
+----------------------------
 
-1. Smoke test
-
-Directory:
-
-  results_smoke_res80_nfreq31_theta80_phi000_090_180
-
-This verified that the corrected cell/PML setup gives finite, sane fluxes.
-
-2. Phi sweep at theta = 80 degrees
+1. Corrected smoke test
 
 Directory:
 
-  results_res200_nfreq121_theta80_phi30
+  simulations/nanodimer/wu-faststart/results_smoke_res80_nfreq31_theta80_phi000_090_180
 
-This sweep used:
+This confirmed that the corrected cell/PML setup gives finite reference fluxes
+and sane normalized spectra.
+
+2. Earlier coarse theta/phi sweeps
+
+Directories:
+
+  simulations/nanodimer/wu-faststart/results_res200_nfreq121_theta80_phi30
+  simulations/nanodimer/wu-faststart/results_theta_sweep_res200_nfreq121_phi0
+
+These established that the simplified dimer model has orientation dependence
+and expected phi symmetry. They are useful background results but are no longer
+the main current run.
+
+3. Current high-resolution phi sweep
+
+Directory:
+
+  simulations/nanodimer/wu-faststart/results_phi_res300_gap6
+
+Run parameters:
 
   theta = 80 deg
-  phi = 0, 30, 60, 90, 120, 150, 180 deg
-  RES = 200
-  NFREQ = 121
-  GAP = 10 nm
-
-This is closest to the paper-style orientation/polarization-angle test. It
-showed clear orientation dependence and symmetry between phi = 0 and 180.
-
-3. Theta sweep at phi = 0 degrees
-
-Directory:
-
-  results_theta_sweep_res200_nfreq121_phi0
-
-This sweep used:
-
-  theta = 0, 30, 60, 90, 120, 150, 180 deg
-  phi = 0 deg
-  RES = 200
-  NFREQ = 121
-  GAP = 10 nm
-
-This tests structural-angle dependence, but it should not be expected to match
-the Wu paper visually because the model uses normal incidence, no substrate,
-and flux-plane proxies rather than experimental dark-field scattering.
-
-
-Current Limitations
--------------------
-
-The current model intentionally remains simplified:
-
-- normal-incidence plane-wave source
-- fixed Ex polarization
-- homogeneous background medium
-- no substrate
-- no dark-field illumination or collection geometry
-- no closed-box scattering cross-section integration
-- simplified capsule nanorod geometry
-- gap is still coarse at RES = 200
-
-These limitations are acceptable for verifying the workflow and exploring
-qualitative trends. They are not sufficient for exact paper reproduction.
-
-
-Design Direction
-----------------
-
-The initial concept was asymmetric rectangles with a -| orientation. That is a
-reasonable design space for broken-symmetry coupling, but rods are probably the
-better near-term target if fabrication is important.
-
-Reasons to lean toward rods:
-
-- Nanorods are a common, fabricable plasmonic geometry.
-- Rounded ends are more realistic than ideal sharp-corner rectangles.
-- Literature comparisons are easier because nanorod dimers are well studied.
-- The current workflow already supports rod length, width, gap, theta, and phi.
-- Rod dimers should be more forgiving numerically than sharp-corner rectangles.
-
-Asymmetric rectangles may still be useful later if the goal is to engineer
-strong symmetry breaking, polarization selectivity, or mode hybridization. But
-for a first fabricable design, rods are the more defensible baseline.
-
-
-Recommended Next Steps
-----------------------
-
-1. Treat Wu et al. as a qualitative benchmark, not a strict reproduction.
-
-The goal should be to verify that the simulation pipeline gives stable,
-physical trends:
-
-- finite reference flux
-- phi symmetry where expected
-- orientation-dependent response
-- gap-dependent coupling
-- resolution convergence
-
-2. Run a gap sweep for the theta = 80 dimer.
-
-The gap is one of the most important physical parameters. Suggested runs:
-
-  GAP = 0.010 um, RES = 200
-  GAP = 0.008 um, RES = 300
-  GAP = 0.006 um, RES = 400
-
-Use a small angular set first:
-
-  THETA_LIST="80"
-  PHI_LIST="0 90 150"
-
-Then expand if the trends look stable.
-
-3. Check resolution convergence.
-
-For one representative case, run:
-
-  RES = 150
-  RES = 200
+  phi = 0, 20, 40, 60, 80, 90, 100, 120, 140, 160, 180 deg
+  gap = 0.006 um
   RES = 300
 
-Track peak wavelength and peak amplitude. The exact amplitude may move, but the
-peak position and qualitative trend should begin to stabilize.
+Main interpretation:
 
-4. Add a single-rod reference test.
+- The dominant mode is near 0.672 um.
+- The 0.672 um mode has strong phi dependence and fits a squared-cosine trend
+  well.
+- A weak candidate mode near 0.950 um also has a reasonable angular trend, but
+  it is much weaker than the 0.672 um mode.
+- The previously tracked 0.853 um feature is not a convincing angular mode in
+  this run.
 
-Before going too far with dimers, add a mode/case for one rod only. Verify:
+Approximate fit summary from the current analysis:
 
-- longitudinal rod resonance appears in the expected wavelength range
-- rotating the rod relative to Ex weakens/strengthens coupling as expected
+  backscatter, 0.672 um: R2 about 0.973, max about 0.00910
+  backscatter, 0.950 um: R2 about 0.886, max about 0.00103
+  extinction,  0.672 um: R2 about 0.974, max about 0.00909
+  extinction,  0.950 um: R2 about 0.887, max about 0.00103
 
-This is the cleanest validation of material, source, monitors, and plotting.
-
-5. Decide whether full scattering cross section is needed.
-
-If the goal is internal design exploration, the current flux-plane proxies may
-be enough.
-
-If the goal becomes quantitative comparison to experiments or papers, add a
-closed flux box around the dimer and compute:
-
-  scattering cross section = scattered power / incident intensity
-
-That is a larger modeling upgrade and should come after the simpler trends are
-stable.
-
-6. Only add substrate/dark-field geometry if needed.
-
-Substrate and dark-field illumination are important for exact experimental
-comparison, but they add complexity. Add them only after:
-
-- the simple homogeneous model is stable
-- gap/resolution convergence has been checked
-- the design direction is clear
+Visually, the 0.950 um feature is not a strong secondary mode. It is better
+described as a weak candidate mode unless higher-quality field plots show a
+clear spatial pattern.
 
 
-Near-Term Practical Run Suggestions
------------------------------------
+Current Bottleneck
+------------------
 
-Gap sweep, moderate cost:
+The local Python Meep field plots are too low resolution for confident mode
+interpretation. The cluster has old Scheme Meep without Python bindings, so the
+current plan is:
 
-  GAP=0.010 RES=200 NFREQ=121 THETA_LIST="80" PHI_LIST="0 90 150" RESULTS_DIR="results_gap10_res200_theta80_phi0_90_150" ./run_wu_fast_background.sh
+1. Run single-wavelength field snapshots on the cluster with Scheme Meep.
+2. Save HDF5 field slices from the old Meep run.
+3. Copy those HDF5 folders back locally.
+4. Plot the slices locally with Python.
 
-  GAP=0.008 RES=300 NFREQ=121 THETA_LIST="80" PHI_LIST="0 90 150" RESULTS_DIR="results_gap8_res300_theta80_phi0_90_150" ./run_wu_fast_background.sh
+This avoids needing Python bindings on the cluster.
 
-  GAP=0.006 RES=400 NFREQ=121 THETA_LIST="80" PHI_LIST="0 90 150" RESULTS_DIR="results_gap6_res400_theta80_phi0_90_150" ./run_wu_fast_background.sh
 
-Finer phi sweep after choosing a gap:
+Current Field Snapshot Workflow
+-------------------------------
 
-  THETA_LIST="80" PHI_LIST="0 15 30 45 60 75 90 105 120 135 150 165 180"
+Main files:
 
-Theta sweep if structural angle remains important:
+  simulations/nanodimer/wu-faststart/nanorod_wu_field_snapshot.ctl
+  simulations/nanodimer/wu-faststart/run_field_snapshots_background.sh
+  simulations/nanodimer/wu-faststart/plot_field_snapshot_h5.py
+  simulations/nanodimer/wu-faststart/FIELD_SNAPSHOT_CLUSTER.md
 
-  THETA_LIST="0 30 60 90 120 150 180" PHI_LIST="0"
+The cluster launcher follows the same execution style as the working broadband
+script:
+
+  mpirun -np "$NP" meep-openmpi ...
+
+Smoke test on the cluster:
+
+  cd simulations/nanodimer/wu-faststart
+  RES=30 RUN_TIME=5 CASES="40:0.672" ./run_field_snapshots_background.sh
+
+If the smoke test creates HDF5 files in:
+
+  field_phi040_wvl0672
+
+then run the default high-resolution snapshot job:
+
+  NP=16 ./run_field_snapshots_background.sh
+
+The default field snapshot cases are:
+
+  phi = 40 deg,  wavelength = 0.672 um
+  phi = 120 deg, wavelength = 0.950 um
+  theta = 80 deg
+  gap = 0.006 um
+  RES = 300
+  run_time = 300
+
+The cluster node reports 32 visible cores, so NP=16 is the recommended first
+full run. NP=32 may be tested, but NP=16 is a safer balance between speed and
+MPI communication overhead.
+
+
+What To Look For In The Field Snapshots
+---------------------------------------
+
+For the 0.672 um / phi=40 case:
+
+- strong near-field concentration around the dimer gap or rod ends
+- clear spatial pattern associated with the dominant spectral peak
+- reasonable symmetry with the rotated dimer geometry
+
+For the 0.950 um / phi=120 case:
+
+- whether there is a distinct field pattern at all
+- whether the field localizes differently than the 0.672 um case
+- whether the weak spectral feature has enough spatial structure to justify
+  calling it a secondary mode
+
+If the 0.950 um field plot does not show a clear distinct mode, treat it as a
+weak spectral shoulder/candidate rather than a robust second resonance.
+
+
+Next Decisions
+--------------
+
+1. First priority: run the cluster field snapshot smoke test.
+
+If it fails, inspect the generated run log and adjust
+nanorod_wu_field_snapshot.ctl for that old Meep version.
+
+2. If the smoke test works, run the default NP=16 snapshot job.
+
+After it finishes, copy the field_phi* directories back locally and plot them:
+
+  conda run -n meep-env python plot_field_snapshot_h5.py field_phi040_wvl0672 -o field_phi040_wvl0672.png
+  conda run -n meep-env python plot_field_snapshot_h5.py field_phi120_wvl0950 -o field_phi120_wvl0950.png
+
+3. Interpret the spatial fields before adding more expensive runs.
+
+Do not immediately start a larger sweep. The current uncertainty is not the
+angle fit; it is whether the weak 0.950 um feature has a meaningful field
+pattern.
+
+4. If the 0.950 um pattern is convincing, run crossed field cases:
+
+  CASES="40:0.950 120:0.672" NP=16 ./run_field_snapshots_background.sh
+
+This checks whether the two wavelengths really exchange strength with angle.
+
+5. If the 0.950 um pattern is not convincing, continue design exploration around
+the dominant 0.672 um mode and treat the secondary feature as weak.
 
 
 Working Conclusion
 ------------------
 
-The workflow is now useful for design exploration. The strongest next
-verification is not exact paper matching; it is checking that rod dimers show
-reasonable symmetry, orientation, gap, and resolution trends. For a fabricable
-device concept, continue with rods as the baseline, then revisit asymmetric
-rectangles only if rods do not provide enough tunability or symmetry breaking.
+The simulation workflow is now useful for qualitative nanodimer design
+exploration. The current strongest result is a robust, angle-dependent 0.672 um
+mode for the theta=80, gap=6 nm dimer. The possible 0.950 um mode is weak and
+needs high-resolution field snapshots before it should be interpreted as a
+real secondary mode.
