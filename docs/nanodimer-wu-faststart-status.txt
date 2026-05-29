@@ -20,6 +20,36 @@ The earlier invalid cell/PML setup was fixed. Reference fluxes are finite, and
 the broadband sweep pipeline now produces physically usable qualitative trends.
 
 
+Geometry Compared With Wu et al.
+--------------------------------
+
+The angle names currently match the paper only partly:
+
+- theta is the angle between the long axes of the two rods.
+- phi is an in-plane rotation of the whole dimer about the z axis.
+- psi is not implemented in the current model.
+
+In Wu et al., the theta=80 dimer was measured with oblique incident light at:
+
+  psi = 60 deg
+
+In the current Meep control files, the source is launched along the z direction,
+so the current model is normal incidence:
+
+  psi = 0 deg
+
+This is a significant geometry difference. It is one reason the present results
+should be interpreted as qualitative mode/orientation trends rather than a
+direct reproduction of the reported S- and P-polarized dark-field spectra.
+
+There is also a coordinate convention difference for phi. In the paper, phi=0
+is defined by the experimental substrate orientation. In the current model,
+phi=0 is the unrotated coordinate construction of the dimer. For theta=80 with
+fixed Ex excitation, the dimer bisector is closest to Ex near phi=40 deg, so
+the paper's S-polarized phi=0 orientation is approximately comparable to our
+phi=40 orientation, not our phi=0 orientation.
+
+
 Important Interpretation
 ------------------------
 
@@ -103,6 +133,36 @@ current plan is:
 4. Plot the slices locally with Python.
 
 This avoids needing Python bindings on the cluster.
+
+
+Possible Oblique-Incidence Upgrade
+----------------------------------
+
+It is possible to better approximate the Wu experiment by adding a psi=60 source
+to the Scheme Meep model, but this should be treated as a separate modeling
+upgrade rather than a small parameter change.
+
+The upgrade would need:
+
+- a wavevector tilted by psi=60 deg relative to z
+- separate S- and P-polarized source definitions
+- phase variation across the source plane so the incident wavefront is oblique
+- careful monitor placement, because reflected/transmitted flux planes are less
+  straightforward for oblique incidence
+- likely retesting of the reference subtraction
+
+For the current finite PML cell, the practical implementation would be a
+custom phased current source. A more rigorous plane-wave oblique-incidence
+setup often uses Bloch-periodic boundaries transverse to the propagation
+direction, but that is a larger change and may not match the isolated-particle
+PML setup we are using now.
+
+Recommended order:
+
+1. Finish the current normal-incidence high-resolution field snapshots.
+2. Use those fields to decide whether the weak 0.950 um feature is a real mode.
+3. If closer paper reproduction is still needed, add a new oblique-incidence
+   control file rather than modifying the validated normal-incidence files.
 
 
 Current Field Snapshot Workflow
