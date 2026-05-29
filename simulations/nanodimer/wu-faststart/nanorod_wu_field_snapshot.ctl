@@ -6,8 +6,9 @@
 ; 2D HDF5 field slices for local plotting.
 ;
 ; Example:
-; meep res=300 gap=0.006 theta=80 phi=40 wvl=0.672 run_time=300 \
-;   nanorod_wu_field_snapshot.ctl
+; mpirun -np 4 meep-openmpi \
+;   res=300 gap=0.006 theta=80 phi=40 wvl=0.672 run_time=300 \
+;   nanorod_wu_field_snapshot.ctl > run.log
 ; ============================================================
 
 ; ----------------------------

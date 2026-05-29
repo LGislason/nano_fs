@@ -43,6 +43,8 @@ about 1.7 million, so each run should be substantially cheaper.
 
 - `nanorod_wu_fast.ctl`: parameterized Meep control file
 - `run_wu_fast_background.sh`: launch script for quick sweeps
+- `nanorod_wu_field_snapshot.ctl`: single-wavelength field snapshot control file
+- `run_field_snapshots_background.sh`: cluster launcher for high-resolution field snapshots
 
 ## Default Interpretation
 

@@ -4,9 +4,16 @@ Use this when the cluster has old Scheme Meep but no Python bindings.
 
 ## Run on the cluster
 
-From `simulations/nanodimer/wu-faststart`, create one output directory per case
-and run `nanorod_wu_field_snapshot.ctl` from inside that directory. Use the
-command format shown in the header of the `.ctl` file.
+From `simulations/nanodimer/wu-faststart`, launch the snapshot wrapper:
+
+```bash
+chmod +x run_field_snapshots_background.sh
+./run_field_snapshots_background.sh
+```
+
+The script uses the same cluster launch style as `run_wu_fast_background.sh`:
+`mpirun -np ${NP} meep-openmpi ...`. The raw command format is also shown in
+the header of `nanorod_wu_field_snapshot.ctl`.
 
 Recommended first cases:
 
@@ -20,6 +27,12 @@ If runtime is acceptable, also run the crossed cases:
 
 Use `res=300`, `gap=0.006`, `theta=80`, and `run_time=300` unless you are doing
 a quick smoke test.
+
+For a smoke test, run:
+
+```bash
+RES=30 RUN_TIME=5 CASES="40:0.672" ./run_field_snapshots_background.sh
+```
 
 Expected HDF5 files include:
 
