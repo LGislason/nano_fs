@@ -103,7 +103,18 @@ def capsule_rod(
     ]
 
 
-def nanorod_geometry(geom: str, gap: float, rod_angle_deg: float) -> tuple[list[mp.GeometricObject], float]:
+def rotate_xy(x: float, y: float, phi_rad: float) -> tuple[float, float]:
+    cos_phi = float(np.cos(phi_rad))
+    sin_phi = float(np.sin(phi_rad))
+    return x * cos_phi - y * sin_phi, x * sin_phi + y * cos_phi
+
+
+def nanorod_geometry(
+    geom: str,
+    gap: float,
+    rod_angle_deg: float,
+    phi_deg: float,
+) -> tuple[list[mp.GeometricObject], float]:
     sx = sy = 0.80
     substrate_thickness = 1.20
     sio2 = mp.Medium(epsilon=2.1)
@@ -119,9 +130,14 @@ def nanorod_geometry(geom: str, gap: float, rod_angle_deg: float) -> tuple[list[
     rod_width = 0.024
     rod_radius = 0.5 * rod_width
     rod_z = rod_radius
+    phi_rad = np.deg2rad(phi_deg)
 
     if geom == "single":
-        return [substrate, *capsule_rod((0, 0, rod_z), (1, 0, 0), rod_length, rod_radius, gold)], rod_z
+        single_axis = rotate_xy(1, 0, phi_rad)
+        return [
+            substrate,
+            *capsule_rod((0, 0, rod_z), (*single_axis, 0), rod_length, rod_radius, gold),
+        ], rod_z
 
     angle = np.deg2rad(rod_angle_deg)
     rod2_ux = float(np.cos(angle))
@@ -135,16 +151,21 @@ def nanorod_geometry(geom: str, gap: float, rod_angle_deg: float) -> tuple[list[
     shift_x = -0.5 * (rod1_cx_raw + rod2_cx_raw)
     shift_y = -0.5 * (rod1_cy_raw + rod2_cy_raw)
 
+    rod1_center = rotate_xy(rod1_cx_raw + shift_x, rod1_cy_raw + shift_y, phi_rad)
+    rod2_center = rotate_xy(rod2_cx_raw + shift_x, rod2_cy_raw + shift_y, phi_rad)
+    rod1_axis = rotate_xy(1, 0, phi_rad)
+    rod2_axis = rotate_xy(rod2_ux, rod2_uy, phi_rad)
+
     rod1 = capsule_rod(
-        (rod1_cx_raw + shift_x, rod1_cy_raw + shift_y, rod_z),
-        (1, 0, 0),
+        (*rod1_center, rod_z),
+        (*rod1_axis, 0),
         rod_length,
         rod_radius,
         gold,
     )
     rod2 = capsule_rod(
-        (rod2_cx_raw + shift_x, rod2_cy_raw + shift_y, rod_z),
-        (rod2_ux, rod2_uy, 0),
+        (*rod2_center, rod_z),
+        (*rod2_axis, 0),
         rod_length,
         rod_radius,
         gold,
@@ -166,20 +187,43 @@ def add_contours(ax: plt.Axes, eps: np.ndarray, extent: list[float]) -> None:
         ax.contour(eps_plot, levels=levels, colors="white", linewidths=0.7, extent=extent)
 
 
+def edge_median(field: np.ndarray) -> float:
+    edges = np.concatenate([field[0, :], field[-1, :], field[:, 0], field[:, -1]])
+    median = float(np.median(edges))
+    return median if median > 0 else float(np.median(field[field > 0]))
+
+
+def relative_contrast(field: np.ndarray) -> np.ndarray:
+    background = edge_median(field)
+    return np.abs(field / background - 1.0)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--geom", choices=["single", "dimer"], default="dimer")
     parser.add_argument("--pol", choices=["Ex", "Ey"], default="Ex")
     parser.add_argument("--wavelength", type=float, default=0.760, help="Wavelength in microns.")
-    parser.add_argument("--resolution", type=int, default=80, help="Pixels per micron.")
+    parser.add_argument("--resolution", type=int, default=200, help="Pixels per micron.")
     parser.add_argument("--run-until", type=float, default=200)
     parser.add_argument("--gap", type=float, default=0.010, help="Dimer gap in microns.")
     parser.add_argument("--angle", type=float, default=80.0, help="Dimer rod angle in degrees.")
+    parser.add_argument(
+        "--phi",
+        type=float,
+        default=0.0,
+        help="In-plane rotation of the whole rod/dimer relative to fixed source polarization.",
+    )
     parser.add_argument(
         "--normalize",
         choices=["panel", "global"],
         default="panel",
         help="Normalize each panel separately or all panels together.",
+    )
+    parser.add_argument(
+        "--contrast",
+        choices=["total", "relative"],
+        default="total",
+        help="Plot total |E|^2 or relative contrast against the panel edge median.",
     )
     parser.add_argument(
         "--vmax-percentile",
@@ -197,7 +241,7 @@ def main() -> None:
     frequency = 1.0 / args.wavelength
     src_comp = mp.Ex if args.pol == "Ex" else mp.Ey
 
-    geometry, rod_z = nanorod_geometry(args.geom, args.gap, args.angle)
+    geometry, rod_z = nanorod_geometry(args.geom, args.gap, args.angle, args.phi)
     source_z = halfz - dpml - 0.12
     field_sx = sx - 2 * dpml - 0.02
     field_sy = sy - 2 * dpml - 0.02
@@ -256,6 +300,11 @@ def main() -> None:
     e2_xy_above = get_field_intensity(sim, dft_xy_above)
     e2_xz = get_field_intensity(sim, dft_xz)
 
+    if args.contrast == "relative":
+        e2_xy_metal = relative_contrast(e2_xy_metal)
+        e2_xy_above = relative_contrast(e2_xy_above)
+        e2_xz = relative_contrast(e2_xz)
+
     eps_xy_metal = sim.get_array(
         center=mp.Vector3(0, 0, z_metal),
         size=mp.Vector3(field_sx, field_sy, 0),
@@ -279,14 +328,14 @@ def main() -> None:
     if args.normalize == "global":
         vmax = np.percentile(np.concatenate([field.ravel() for field in fields]), args.vmax_percentile)
         fields = [np.clip(field / vmax, 0, 1) for field in fields]
-        colorbar_label = f"Global-normalized |E|^2, p{args.vmax_percentile:g}=1"
+        colorbar_label = f"Global-normalized {args.contrast} field, p{args.vmax_percentile:g}=1"
     else:
         normalized_fields = []
         for field in fields:
             vmax = np.percentile(field, args.vmax_percentile)
             normalized_fields.append(np.clip(field / vmax, 0, 1))
         fields = normalized_fields
-        colorbar_label = f"Panel-normalized |E|^2, p{args.vmax_percentile:g}=1"
+        colorbar_label = f"Panel-normalized {args.contrast} field, p{args.vmax_percentile:g}=1"
 
     e2_xy_metal, e2_xy_above, e2_xz = fields
 
@@ -320,13 +369,14 @@ def main() -> None:
     fig.colorbar(im, ax=axes, shrink=0.88, label=colorbar_label)
     fig.suptitle(
         f"Nanorod {args.geom} field intensity: {args.pol}, "
-        f"lambda={args.wavelength:.3f} um, res={args.resolution}"
+        f"lambda={args.wavelength:.3f} um, phi={args.phi:.0f} deg, res={args.resolution}"
     )
 
     args.outdir.mkdir(parents=True, exist_ok=True)
     outfile = args.outdir / (
         f"field_{args.geom}_{args.pol}_lambda{args.wavelength:.3f}um_"
-        f"gap{args.gap:.3f}um_res{args.resolution}_{args.normalize}.png"
+        f"phi{args.phi:03.0f}_gap{args.gap:.3f}um_res{args.resolution}_"
+        f"{args.normalize}_{args.contrast}.png"
     )
     fig.savefig(outfile, dpi=250)
     plt.close(fig)

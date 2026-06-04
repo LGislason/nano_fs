@@ -139,21 +139,29 @@
 
 ; Base dimer: theta is the internal opening angle between rods, measured
 ; between the two rod directions pointing away from the gap.
+; The user-facing gap is the closest metal-to-metal surface separation.  The
+; rounded capsule end centers must therefore be farther apart by 2 radii.
 (define rod1-out-ang pi)
 (define rod2-out-ang (- pi theta-rad))
+(define gap-axis-ang (- (* 0.5 (+ rod1-out-ang rod2-out-ang)) (/ pi 2)))
+(define gap-axis-x (cos gap-axis-ang))
+(define gap-axis-y (sin gap-axis-ang))
+(define rod-tip-gap (+ gap (* 2 rod-radius (- 1 (sin (/ theta-rad 2))))))
 
-(define rod1-tip-x (- (/ gap 2)))
-(define rod1-tip-y 0.0)
-(define rod2-tip-x (/ gap 2))
-(define rod2-tip-y 0.0)
+(define rod1-tip-x (* -0.5 rod-tip-gap gap-axis-x))
+(define rod1-tip-y (* -0.5 rod-tip-gap gap-axis-y))
+(define rod2-tip-x (* 0.5 rod-tip-gap gap-axis-x))
+(define rod2-tip-y (* 0.5 rod-tip-gap gap-axis-y))
 
 (define rod1-bx (+ rod1-tip-x (* 0.5 rod-length (cos rod1-out-ang))))
 (define rod1-by (+ rod1-tip-y (* 0.5 rod-length (sin rod1-out-ang))))
 (define rod2-bx (+ rod2-tip-x (* 0.5 rod-length (cos rod2-out-ang))))
 (define rod2-by (+ rod2-tip-y (* 0.5 rod-length (sin rod2-out-ang))))
 
-(define dimer-shift-x (* -0.5 (+ rod1-bx rod2-bx)))
-(define dimer-shift-y (* -0.5 (+ rod1-by rod2-by)))
+; Keep the gap reference centered at the cell origin so centered field slices
+; pass through the dimer junction.
+(define dimer-shift-x 0.0)
+(define dimer-shift-y 0.0)
 
 (define rod1-cx0 (+ rod1-bx dimer-shift-x))
 (define rod1-cy0 (+ rod1-by dimer-shift-y))
@@ -178,6 +186,10 @@
   (append
    (make-capsule-rod rod1-cx rod1-cy rod-z rod1-ux rod1-uy 0)
    (make-capsule-rod rod2-cx rod2-cy rod-z rod2-ux rod2-uy 0)))
+
+(print "wu-fast geometry: theta=" theta " phi=" phi
+       " gap=" gap " rod-tip-gap=" rod-tip-gap
+       " res=" res " nbg=" nbg "\n")
 
 ; ----------------------------
 ; Spectrum

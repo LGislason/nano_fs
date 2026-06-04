@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 from pathlib import Path
 
 import h5py
@@ -12,6 +13,7 @@ import numpy as np
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
 
 SLICES = [
@@ -19,6 +21,14 @@ SLICES = [
     ("xy_above", "XY above rods", "x (um)", "y (um)"),
     ("xz", "XZ at y=0", "x (um)", "z (um)"),
 ]
+
+# These match the output volumes in nanorod_wu_field_snapshot.ctl:
+# sx/sy/sz minus the two PML layers and a small margin, centered at zero.
+FIELD_SX = 0.52
+FIELD_SY = 0.52
+FIELD_SZ = 0.92
+ROD_LENGTH = 0.069
+ROD_WIDTH = 0.024
 
 
 def first_dataset(group: h5py.Group) -> np.ndarray:
@@ -45,6 +55,8 @@ def read_h5_array(path: Path) -> np.ndarray:
 def find_h5(input_dir: Path, stem: str) -> Path:
     matches = sorted(input_dir.glob(f"{stem}*.h5"))
     if not matches:
+        matches = sorted(input_dir.glob(f"*{stem}*.h5"))
+    if not matches:
         raise FileNotFoundError(f"No HDF5 file matching {stem}*.h5 in {input_dir}")
     return matches[0]
 
@@ -59,6 +71,23 @@ def load_slice(input_dir: Path, prefix: str) -> tuple[np.ndarray, np.ndarray]:
     # are encountered, abs handles them correctly.
     e2 = np.abs(ex) ** 2 + np.abs(ey) ** 2 + np.abs(ez) ** 2
     return e2, eps
+
+
+def run_params(input_dir: Path) -> dict[str, float]:
+    params = {"theta": 80.0, "phi": 0.0, "gap": 0.006}
+    log_path = input_dir / "run.log"
+    if not log_path.exists():
+        return params
+    cli_pattern = re.compile(r"command-line param: (theta|phi|gap)=([0-9.]+)")
+    tip_gap_pattern = re.compile(r"rod-tip-gap=([0-9.eE+-]+)")
+    for line in log_path.read_text(errors="replace").splitlines():
+        match = cli_pattern.search(line)
+        if match:
+            params[match.group(1)] = float(match.group(2))
+        match = tip_gap_pattern.search(line)
+        if match:
+            params["rod_tip_gap"] = float(match.group(1))
+    return params
 
 
 def edge_median(field: np.ndarray) -> float:
@@ -79,11 +108,149 @@ def normalize(field: np.ndarray, contrast: str, percentile: float) -> np.ndarray
     return np.clip(field / vmax, 0, 1)
 
 
-def add_contours(ax: plt.Axes, eps: np.ndarray) -> None:
-    eps_plot = np.rot90(np.real(eps))
+def image_data(field: np.ndarray) -> np.ndarray:
+    return np.real(field).T
+
+
+def image_extent(prefix: str) -> tuple[float, float, float, float]:
+    if prefix.startswith("xy_"):
+        return (-FIELD_SX / 2, FIELD_SX / 2, -FIELD_SY / 2, FIELD_SY / 2)
+    if prefix == "xz":
+        return (-FIELD_SX / 2, FIELD_SX / 2, -FIELD_SZ / 2, FIELD_SZ / 2)
+    raise ValueError(f"Unknown slice prefix: {prefix}")
+
+
+def rotate_xy(x: float, y: float, angle: float) -> tuple[float, float]:
+    return x * np.cos(angle) - y * np.sin(angle), x * np.sin(angle) + y * np.cos(angle)
+
+
+def capsule_outline(center: np.ndarray, angle: float) -> tuple[np.ndarray, np.ndarray]:
+    radius = ROD_WIDTH / 2
+    body_length = ROD_LENGTH - 2 * radius
+    u = np.array([np.cos(angle), np.sin(angle)])
+    front = center + 0.5 * body_length * u
+    back = center - 0.5 * body_length * u
+    front_angles = np.linspace(angle - np.pi / 2, angle + np.pi / 2, 48)
+    back_angles = np.linspace(angle + np.pi / 2, angle + 3 * np.pi / 2, 48)
+    front_arc = front[:, None] + radius * np.vstack((np.cos(front_angles), np.sin(front_angles)))
+    back_arc = back[:, None] + radius * np.vstack((np.cos(back_angles), np.sin(back_angles)))
+    points = np.hstack((front_arc, back_arc, front_arc[:, :1]))
+    return points[0], points[1]
+
+
+def rod_geometry(params: dict[str, float]) -> tuple[list[tuple[np.ndarray, float]], tuple[np.ndarray, np.ndarray]]:
+    theta = np.deg2rad(params["theta"])
+    phi = np.deg2rad(params["phi"])
+    radius = ROD_WIDTH / 2
+    tip_gap = params.get("rod_tip_gap", params["gap"] + 2 * radius * (1 - np.sin(theta / 2)))
+
+    rod1_ang0 = np.pi
+    rod2_ang0 = np.pi - theta
+    gap_axis = 0.5 * (rod1_ang0 + rod2_ang0) - np.pi / 2
+    gap_axis_vec = np.array([np.cos(gap_axis), np.sin(gap_axis)])
+    rod1_tip = -0.5 * tip_gap * gap_axis_vec
+    rod2_tip = 0.5 * tip_gap * gap_axis_vec
+    rod1_center0 = rod1_tip + 0.5 * ROD_LENGTH * np.array([np.cos(rod1_ang0), np.sin(rod1_ang0)])
+    rod2_center0 = rod2_tip + 0.5 * ROD_LENGTH * np.array([np.cos(rod2_ang0), np.sin(rod2_ang0)])
+    shift = np.array([0.0, 0.0])
+
+    rods = []
+    for center0, angle0 in ((rod1_center0, rod1_ang0), (rod2_center0, rod2_ang0)):
+        cx, cy = rotate_xy(*(center0 + shift), phi)
+        rods.append((np.array([cx, cy]), angle0 + phi))
+
+    tip1 = np.array(rotate_xy(*(rod1_tip + shift), phi))
+    tip2 = np.array(rotate_xy(*(rod2_tip + shift), phi))
+    return rods, (tip1, tip2)
+
+
+def add_analytic_rods(ax: plt.Axes, params: dict[str, float], linewidth: float = 0.9) -> None:
+    rods, (tip1, tip2) = rod_geometry(params)
+    for center, angle in rods:
+        x, y = capsule_outline(center, angle)
+        ax.plot(x, y, color="cyan", linewidth=linewidth, solid_capstyle="round")
+    ax.plot(
+        [tip1[0], tip2[0]],
+        [tip1[1], tip2[1]],
+        color="cyan",
+        linewidth=max(linewidth, 1.0),
+        solid_capstyle="round",
+    )
+
+
+def add_contours(ax: plt.Axes, eps: np.ndarray, prefix: str, linewidth: float = 0.45) -> None:
+    eps_plot = image_data(eps)
     levels = [level for level in (1.5, 3.0, 5.0) if eps_plot.min() < level < eps_plot.max()]
     if levels:
-        ax.contour(eps_plot, levels=levels, colors="white", linewidths=0.7)
+        xmin, xmax, ymin, ymax = image_extent(prefix)
+        x = np.linspace(xmin, xmax, eps_plot.shape[1])
+        y = np.linspace(ymin, ymax, eps_plot.shape[0])
+        ax.contour(
+            x,
+            y,
+            eps_plot,
+            levels=levels,
+            colors="white",
+            linewidths=linewidth,
+        )
+
+
+def plot_slice(
+    ax: plt.Axes,
+    prefix: str,
+    title: str,
+    xlabel: str,
+    ylabel: str,
+    field: np.ndarray,
+    eps: np.ndarray,
+    params: dict[str, float],
+) -> plt.AxesImage:
+    extent = image_extent(prefix)
+    im = ax.imshow(
+        image_data(field),
+        origin="lower",
+        extent=extent,
+        cmap="inferno",
+        vmin=0,
+        vmax=1,
+        interpolation="nearest",
+    )
+    if prefix == "xy_rod":
+        add_analytic_rods(ax, params)
+    else:
+        add_contours(ax, eps, prefix)
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_aspect("equal")
+    return im
+
+
+def add_gap_zoom(
+    ax: plt.Axes,
+    field: np.ndarray,
+    eps: np.ndarray,
+    params: dict[str, float],
+    zoom_half_width: float,
+) -> plt.AxesImage:
+    extent = image_extent("xy_rod")
+    im = ax.imshow(
+        image_data(field),
+        origin="lower",
+        extent=extent,
+        cmap="inferno",
+        vmin=0,
+        vmax=1,
+        interpolation="nearest",
+    )
+    add_analytic_rods(ax, params, linewidth=1.0)
+    ax.set_xlim(-zoom_half_width, zoom_half_width)
+    ax.set_ylim(-zoom_half_width, zoom_half_width)
+    ax.set_title("Gap zoom")
+    ax.set_xlabel("x (um)")
+    ax.set_ylabel("y (um)")
+    ax.set_aspect("equal")
+    return im
 
 
 def main() -> None:
@@ -97,20 +264,39 @@ def main() -> None:
         help="Plot total |E|^2 or relative contrast against panel edge median.",
     )
     parser.add_argument("--vmax-percentile", type=float, default=99.5)
+    parser.add_argument(
+        "--zoom-half-width",
+        type=float,
+        default=0.065,
+        help="Half-width in um for the rod-midplane gap zoom panel.",
+    )
     args = parser.parse_args()
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.8), constrained_layout=True)
+    fig, axes = plt.subplots(2, 2, figsize=(10.5, 9.2), constrained_layout=True)
+    flat_axes = axes.ravel()
+    slices: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    params = run_params(args.input_dir)
     im = None
-    for ax, (prefix, title, xlabel, ylabel) in zip(axes, SLICES):
+    for ax, (prefix, title, xlabel, ylabel) in zip(flat_axes[:3], SLICES):
         field, eps = load_slice(args.input_dir, prefix)
         field = normalize(field, args.contrast, args.vmax_percentile)
-        im = ax.imshow(np.rot90(field), origin="lower", cmap="inferno", vmin=0, vmax=1)
-        add_contours(ax, eps)
-        ax.set_title(title)
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
+        slices[prefix] = (field, eps)
+        im = plot_slice(ax, prefix, title, xlabel, ylabel, field, eps, params)
 
-    fig.colorbar(im, ax=axes, shrink=0.88, label=f"{args.contrast} field, p{args.vmax_percentile:g}=1")
+    xy_field, xy_eps = slices["xy_rod"]
+    im = add_gap_zoom(flat_axes[3], xy_field, xy_eps, params, args.zoom_half_width)
+    zoom_box = Rectangle(
+        (-args.zoom_half_width, -args.zoom_half_width),
+        2 * args.zoom_half_width,
+        2 * args.zoom_half_width,
+        fill=False,
+        edgecolor="cyan",
+        linewidth=0.7,
+    )
+    flat_axes[0].add_patch(zoom_box)
+
+    fig.suptitle(args.input_dir.name)
+    fig.colorbar(im, ax=flat_axes, shrink=0.82, label=f"{args.contrast} field, p{args.vmax_percentile:g}=1")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.output, dpi=250)
     plt.close(fig)

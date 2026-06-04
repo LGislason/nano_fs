@@ -17,13 +17,13 @@ the header of `nanorod_wu_field_snapshot.ctl`.
 
 Recommended first cases:
 
-- `field_phi040_wvl0672`: main 0.672 um mode near its angular maximum.
-- `field_phi120_wvl0950`: weak 0.950 um candidate near its angular maximum.
+- `field_sym_gap0006nm_theta080_phi040_wvl0672`: main 0.672 um mode near its angular maximum.
+- `field_sym_gap0006nm_theta080_phi120_wvl0950`: weak 0.950 um candidate near its angular maximum.
 
 If runtime is acceptable, also run the crossed cases:
 
-- `field_phi040_wvl0950`
-- `field_phi120_wvl0672`
+- `field_sym_gap0006nm_theta080_phi040_wvl0950`
+- `field_sym_gap0006nm_theta080_phi120_wvl0672`
 
 Use `res=300`, `gap=0.006`, `theta=80`, and `run_time=300` unless you are doing
 a quick smoke test.
@@ -59,12 +59,12 @@ Copy each output directory back to this repository, then run:
 
 ```bash
 conda run -n meep-env python plot_field_snapshot_h5.py \
-  field_phi040_wvl0672 \
-  -o field_phi040_wvl0672.png
+  field_sym_gap0006nm_theta080_phi040_wvl0672 \
+  -o field_sym_gap0006nm_theta080_phi040_wvl0672.png
 
 conda run -n meep-env python plot_field_snapshot_h5.py \
-  field_phi120_wvl0950 \
-  -o field_phi120_wvl0950.png
+  field_sym_gap0006nm_theta080_phi120_wvl0950 \
+  -o field_sym_gap0006nm_theta080_phi120_wvl0950.png
 ```
 
 Use `--contrast total` if you want raw `|E|^2` instead of edge-normalized

@@ -22,7 +22,7 @@ waiting days per attempt.
 
 - Uses a homogeneous background medium instead of a substrate
 - Uses normal-incidence excitation instead of the paper's oblique dark-field setup
-- Uses a larger default gap than the paper because 1 nm is not practical for a
+- Uses a larger default surface gap than the paper because 1 nm is not practical for a
   cheap 3D FDTD sweep
 - Produces fast directional flux proxies, not a rigorous scattering cross section
 
@@ -66,13 +66,13 @@ but these are still not paper-grade dark-field scattering cross sections.
 The run script defaults to:
 
 - `theta = 80 deg`
-- `phi = 0, 20, ..., 180 deg`
-- `gap = 10 nm`
+- `phi = 0, 20, 40, 60, 80, 90, 100, 120, 140, 160, 180 deg`
+- `gap = 6 nm` true metal-to-metal surface gap
 - `resolution = 200 px/um`
 - `background index = 1.28`
 
-This is intended to capture the paper's angle-trend qualitatively before you
-spend time on a finer model.
+This is intended as the corrected-geometry orientation sweep at fixed
+`theta=80 deg`.
 
 ## Recommended Refinement Path
 
@@ -97,4 +97,6 @@ Useful environment overrides:
 NP=8 RES=250 GAP=0.006 THETA_LIST="80" PHI_LIST="0 30 60 90 120 150 180" ./run_wu_fast_background.sh
 ```
 
-The script writes results into `results/`.
+The script writes results into a geometry-tagged directory such as
+`results_sym_gap0006nm_res200_nfreq121_theta080_phi_sweep`, unless `RESULTS_DIR`
+is set explicitly.

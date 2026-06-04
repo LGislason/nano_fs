@@ -34,27 +34,33 @@ def nanorod_centers_and_axes(
     phi_deg: float,
     gap: float,
     rod_length: float,
+    rod_width: float,
 ) -> list[tuple[float, float, float, float]]:
     theta = math.radians(theta_deg)
     phi = math.radians(phi_deg)
+    rod_radius = rod_width / 2.0
+    rod_tip_gap = gap + 2.0 * rod_radius * (1.0 - math.sin(theta / 2.0))
 
     # theta is the internal opening angle between the two rod directions
     # pointing away from the gap.
     rod1_out_angle = math.pi
     rod2_out_angle = math.pi - theta
+    gap_axis_angle = 0.5 * (rod1_out_angle + rod2_out_angle) - math.pi / 2.0
+    gap_axis_x = math.cos(gap_axis_angle)
+    gap_axis_y = math.sin(gap_axis_angle)
 
-    rod1_tip_x = -gap / 2.0
-    rod1_tip_y = 0.0
-    rod2_tip_x = gap / 2.0
-    rod2_tip_y = 0.0
+    rod1_tip_x = -0.5 * rod_tip_gap * gap_axis_x
+    rod1_tip_y = -0.5 * rod_tip_gap * gap_axis_y
+    rod2_tip_x = 0.5 * rod_tip_gap * gap_axis_x
+    rod2_tip_y = 0.5 * rod_tip_gap * gap_axis_y
 
     rod1_bx = rod1_tip_x + 0.5 * rod_length * math.cos(rod1_out_angle)
     rod1_by = rod1_tip_y + 0.5 * rod_length * math.sin(rod1_out_angle)
     rod2_bx = rod2_tip_x + 0.5 * rod_length * math.cos(rod2_out_angle)
     rod2_by = rod2_tip_y + 0.5 * rod_length * math.sin(rod2_out_angle)
 
-    dimer_shift_x = -0.5 * (rod1_bx + rod2_bx)
-    dimer_shift_y = -0.5 * (rod1_by + rod2_by)
+    dimer_shift_x = 0.0
+    dimer_shift_y = 0.0
 
     rod1_cx0 = rod1_bx + dimer_shift_x
     rod1_cy0 = rod1_by + dimer_shift_y
@@ -80,7 +86,7 @@ def build_geometry(args, mp):
 
     geometry = []
     for cx, cy, ux, uy in nanorod_centers_and_axes(
-        args.theta, args.phi, args.gap, args.rod_length
+        args.theta, args.phi, args.gap, args.rod_length, args.rod_width
     ):
         axis = mp.Vector3(ux, uy, 0)
         center = mp.Vector3(cx, cy, 0)

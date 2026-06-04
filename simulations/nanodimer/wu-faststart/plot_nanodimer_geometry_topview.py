@@ -8,18 +8,30 @@ import math
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import Arc, Rectangle
-from matplotlib.transforms import Affine2D
+import numpy as np
+from matplotlib.patches import Arc
 
 
-def rod_centers_axes(theta_deg: float, phi_deg: float, gap: float, rod_length: float):
+def rod_tip_gap(theta_deg: float, gap: float, rod_radius: float) -> float:
+    theta = math.radians(theta_deg)
+    return gap + 2.0 * rod_radius * (1.0 - math.sin(theta / 2.0))
+
+
+def rod_centers_axes(theta_deg: float, phi_deg: float, gap: float, rod_length: float, rod_width: float):
     theta = math.radians(theta_deg)
     phi = math.radians(phi_deg)
+    tip_gap = rod_tip_gap(theta_deg, gap, rod_width / 2.0)
 
     rod1_out = math.pi
     rod2_out = math.pi - theta
+    gap_axis = 0.5 * (rod1_out + rod2_out) - math.pi / 2.0
+    gap_axis_x = math.cos(gap_axis)
+    gap_axis_y = math.sin(gap_axis)
 
-    tips = [(-gap / 2.0, 0.0), (gap / 2.0, 0.0)]
+    tips = [
+        (-0.5 * tip_gap * gap_axis_x, -0.5 * tip_gap * gap_axis_y),
+        (0.5 * tip_gap * gap_axis_x, 0.5 * tip_gap * gap_axis_y),
+    ]
     angles = [rod1_out, rod2_out]
 
     centers = []
@@ -30,10 +42,20 @@ def rod_centers_axes(theta_deg: float, phi_deg: float, gap: float, rod_length: f
         centers.append((cx, cy))
         axes.append(angle)
 
-    dimer_shift_x = -0.5 * (centers[0][0] + centers[1][0])
-    dimer_shift_y = -0.5 * (centers[0][1] + centers[1][1])
+    dimer_shift_x = 0.0
+    dimer_shift_y = 0.0
 
     rotated = []
+    rotated_tips = []
+    for point in tips:
+        x = point[0] + dimer_shift_x
+        y = point[1] + dimer_shift_y
+        rotated_tips.append(
+            (
+                x * math.cos(phi) - y * math.sin(phi),
+                x * math.sin(phi) + y * math.cos(phi),
+            )
+        )
     for (cx, cy), angle in zip(centers, axes):
         x = cx + dimer_shift_x
         y = cy + dimer_shift_y
@@ -41,22 +63,27 @@ def rod_centers_axes(theta_deg: float, phi_deg: float, gap: float, rod_length: f
         yr = x * math.sin(phi) + y * math.cos(phi)
         rotated.append((xr, yr, angle + phi))
 
-    return rotated
+    return rotated, rotated_tips, tip_gap
+
+
+def capsule_outline(cx: float, cy: float, angle: float, length: float, width: float):
+    radius = width / 2.0
+    body_length = length - 2.0 * radius
+    ux = math.cos(angle)
+    uy = math.sin(angle)
+    front = np.array([cx + 0.5 * body_length * ux, cy + 0.5 * body_length * uy])
+    back = np.array([cx - 0.5 * body_length * ux, cy - 0.5 * body_length * uy])
+    front_angles = np.linspace(angle - math.pi / 2.0, angle + math.pi / 2.0, 80)
+    back_angles = np.linspace(angle + math.pi / 2.0, angle + 3.0 * math.pi / 2.0, 80)
+    front_arc = front[:, None] + radius * np.vstack((np.cos(front_angles), np.sin(front_angles)))
+    back_arc = back[:, None] + radius * np.vstack((np.cos(back_angles), np.sin(back_angles)))
+    points = np.hstack((front_arc, back_arc, front_arc[:, :1]))
+    return points[0], points[1]
 
 
 def add_rod(ax, cx, cy, angle, length, width, color):
-    patch = Rectangle(
-        (-length / 2.0, -width / 2.0),
-        length,
-        width,
-        facecolor=color,
-        edgecolor="black",
-        linewidth=1.0,
-        alpha=0.85,
-    )
-    transform = Affine2D().rotate(angle).translate(cx, cy) + ax.transData
-    patch.set_transform(transform)
-    ax.add_patch(patch)
+    x, y = capsule_outline(cx, cy, angle, length, width)
+    ax.fill(x, y, facecolor=color, edgecolor="black", linewidth=1.2, alpha=0.9)
 
 
 def main() -> None:
@@ -70,7 +97,7 @@ def main() -> None:
     args = parser.parse_args()
 
     fig, ax = plt.subplots(figsize=(5.2, 5.0))
-    rods = rod_centers_axes(args.theta, args.phi, args.gap, args.rod_length)
+    rods, tips, tip_gap = rod_centers_axes(args.theta, args.phi, args.gap, args.rod_length, args.rod_width)
 
     for cx, cy, angle in rods:
         add_rod(ax, cx, cy, angle, args.rod_length, args.rod_width, "#d8a020")
@@ -88,8 +115,18 @@ def main() -> None:
     )
     ax.add_patch(arc)
 
-    ax.scatter([-args.gap / 2.0, args.gap / 2.0], [0, 0], s=16, color="black", zorder=3)
+    tip_x = [tip[0] for tip in tips]
+    tip_y = [tip[1] for tip in tips]
+    ax.scatter(tip_x, tip_y, s=16, color="black", zorder=3, label="tip reference")
+    ax.plot(tip_x, tip_y, color="black", linewidth=0.8, alpha=0.7)
     ax.text(0, arc_radius * 1.15, f"theta = {args.theta:g} deg", ha="center", color="tab:red")
+    ax.text(
+        0,
+        -0.085,
+        f"surface gap = {args.gap * 1000:g} nm; tip spacing = {tip_gap * 1000:.2f} nm",
+        ha="center",
+        fontsize=9,
+    )
 
     lim = 0.095
     ax.set_xlim(-lim, lim)
@@ -97,7 +134,8 @@ def main() -> None:
     ax.set_aspect("equal")
     ax.set_xlabel("x (um)")
     ax.set_ylabel("y (um)")
-    ax.set_title("Nanodimer top view")
+    ax.set_title(f"Nanodimer top view: theta={args.theta:g} deg, phi={args.phi:g} deg")
+    ax.legend(loc="upper right", fontsize=8)
     fig.tight_layout()
     fig.savefig(args.output, dpi=250)
     print(f"Wrote {args.output}")

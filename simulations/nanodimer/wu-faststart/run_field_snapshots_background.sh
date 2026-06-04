@@ -6,7 +6,8 @@ NP="${NP:-4}"
 CTL="${CTL:-nanorod_wu_field_snapshot.ctl}"
 
 # Snapshot defaults. Override these on the command line for smoke tests or
-# final high-resolution runs.
+# final high-resolution runs. GAP is the true metal-to-metal surface gap; the
+# control file derives the internal tip-reference spacing.
 RES="${RES:-300}"
 GAP="${GAP:-0.006}"
 NBG="${NBG:-1.28}"
@@ -14,6 +15,8 @@ THETA="${THETA:-80}"
 RUN_TIME="${RUN_TIME:-300}"
 POL="${POL:-0}"
 CASES="${CASES:-40:0.672 120:0.950}"
+GAP_TAG="${GAP_TAG:-$(printf "%04d" "$(awk "BEGIN {print int(${GAP} * 1000 + 0.5)}")")}"
+OUT_PREFIX="${OUT_PREFIX:-field_sym_gap${GAP_TAG}nm}"
 LOGFILE="${LOGFILE:-run_field_snapshots_$(date +%Y%m%d_%H%M%S).out}"
 
 if [ ! -f "$CTL" ]; then
@@ -30,13 +33,14 @@ echo "Using NP=${NP}"
 echo "Control file: ${CTL}"
 echo "RES=${RES} GAP=${GAP} NBG=${NBG} THETA=${THETA} RUN_TIME=${RUN_TIME} POL=${POL}"
 echo "CASES=${CASES}"
+echo "OUT_PREFIX=${OUT_PREFIX}"
 
 for item in ${CASES}; do
   phi="${item%%:*}"
   wvl="${item##*:}"
   phi_tag="$(printf "%03d" "$phi")"
   wvl_tag="${wvl/./}"
-  outdir="field_phi${phi_tag}_wvl${wvl_tag}"
+  outdir="${OUT_PREFIX}_theta$(printf "%03d" "$THETA")_phi${phi_tag}_wvl${wvl_tag}"
 
   echo "[$(date "+%F %T")] running ${outdir}"
   mkdir -p "$outdir"
