@@ -1,6 +1,9 @@
 # macOS/editor noise
 .DS_Store
+**/.DS_Store
 *.swp
+*.swo
+*~
 
 # Python cache/build artifacts
 __pycache__/
@@ -19,6 +22,11 @@ __pycache__/
 # Common generated result directories
 results/
 bad_results/
+# Generated sweep/result output dirs (named results_*, results<date>, etc.)
+results_*/
+results[0-9]*/
+**/results_*/
+**/bad_results/
 
 # Large/generated analysis artifacts can be regenerated from scripts and data.
 # Keep small CSV/TXT/PNG files tracked when they are useful reference outputs.

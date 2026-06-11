@@ -1,6 +1,0 @@
-nohup bash -c '
-mpirun -np 4 meep-openmpi mode=0 pol=0 geom=0 nanorod_validation.ctl > inc_ex_single.txt &&
-mpirun -np 4 meep-openmpi mode=1 pol=0 geom=0 nanorod_validation.ctl > rod_ex_single.txt &&
-mpirun -np 4 meep-openmpi mode=0 pol=1 geom=0 nanorod_validation.ctl > inc_ey_single.txt &&
-mpirun -np 4 meep-openmpi mode=1 pol=1 geom=0 nanorod_validation.ctl > rod_ey_single.txt
-' > single_run.out 2>&1 &

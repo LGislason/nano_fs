@@ -1,6 +1,0 @@
-nohup bash -c '
-mpirun -np 4 meep-openmpi mode=0 pol=0 geom=1 nanorod_validation.ctl > inc_ex_dimer.txt &&
-mpirun -np 4 meep-openmpi mode=1 pol=0 geom=1 nanorod_validation.ctl > rod_ex_dimer.txt &&
-mpirun -np 4 meep-openmpi mode=0 pol=1 geom=1 nanorod_validation.ctl > inc_ey_dimer.txt &&
-mpirun -np 4 meep-openmpi mode=1 pol=1 geom=1 nanorod_validation.ctl > rod_ey_dimer.txt
-' > dimer_run.out 2>&1 &
