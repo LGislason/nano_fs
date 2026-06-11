@@ -28,5 +28,9 @@ results[0-9]*/
 **/results_*/
 **/bad_results/
 
+# Exception: keep the GOLDEN Wu phi-sweep results tracked for backup/reproducibility
+!**/results_sym_gap0006nm_res200_nfreq121_theta080_phi_sweep/
+!**/results_sym_gap0006nm_res200_nfreq121_theta080_phi_sweep/**
+
 # Large/generated analysis artifacts can be regenerated from scripts and data.
 # Keep small CSV/TXT/PNG files tracked when they are useful reference outputs.
