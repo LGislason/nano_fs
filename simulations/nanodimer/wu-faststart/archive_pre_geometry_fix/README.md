@@ -19,3 +19,12 @@ The current, post-fix golden run lives one level up at:
 - `results_phi_res300_gap6/` — refined phi sweep, res 300 (see its ANALYSIS.md)
 
 All use the old geometry and should not be used for publication or comparison.
+
+## Archived field snapshots (also pre-fix, dated 2026-06-03)
+
+- `field_phi040_wvl0672/` — gap near-field snapshot, old geometry
+- `field_phi120_wvl0950/` — gap near-field snapshot, old geometry (0.950 um is
+  not one of the bands the corrected runs actually produce)
+
+The corrected, post-fix field snapshot lives one level up at
+`../field_sym_gap0006nm_theta080_phi120_wvl0792/`.

@@ -17,8 +17,8 @@ from matplotlib.patches import Rectangle
 
 
 SLICES = [
-    ("xy_rod", "XY at rod midplane", "x (um)", "y (um)"),
-    ("xy_above", "XY above rods", "x (um)", "y (um)"),
+    ("xy_rod", "XY at rod midplane (z=0 nm)", "x (um)", "y (um)"),
+    ("xy_above", "XY above rods (z=+30 nm)", "x (um)", "y (um)"),
     ("xz", "XZ at y=0", "x (um)", "z (um)"),
 ]
 
@@ -61,15 +61,40 @@ def find_h5(input_dir: Path, stem: str) -> Path:
     return matches[0]
 
 
+def read_h5_optional(input_dir: Path, stem: str) -> np.ndarray | None:
+    """Read a slice if a matching *stem*.h5 exists, else return None."""
+    matches = sorted(input_dir.glob(f"*{stem}*.h5"))
+    return read_h5_array(matches[0]) if matches else None
+
+
 def load_slice(input_dir: Path, prefix: str) -> tuple[np.ndarray, np.ndarray]:
     eps = read_h5_array(find_h5(input_dir, f"{prefix}_eps"))
     ex = read_h5_array(find_h5(input_dir, f"{prefix}_ex"))
     ey = read_h5_array(find_h5(input_dir, f"{prefix}_ey"))
     ez = read_h5_array(find_h5(input_dir, f"{prefix}_ez"))
 
+    # If quarter-period companion snapshots ("_q") exist, combine them to recover
+    # the phase-independent steady-state amplitude:  |E_amp|^2 = E(t)^2 +
+    # E(t+T/4)^2  (since cos^2 + sin^2 = 1, per component).  This is the correct
+    # quantity for an |E|^2/|E0|^2 enhancement map.  Otherwise fall back to a
+    # single instantaneous snapshot, which is phase-dependent and only
+    # qualitatively correct.
+    ex_q = read_h5_optional(input_dir, f"{prefix}_ex_q")
+    ey_q = read_h5_optional(input_dir, f"{prefix}_ey_q")
+    ez_q = read_h5_optional(input_dir, f"{prefix}_ez_q")
+
     # Old Meep output snapshots are real time-domain fields. If complex arrays
     # are encountered, abs handles them correctly.
-    e2 = np.abs(ex) ** 2 + np.abs(ey) ** 2 + np.abs(ez) ** 2
+    if ex_q is not None and ey_q is not None and ez_q is not None:
+        e2 = (
+            np.abs(ex) ** 2 + np.abs(ex_q) ** 2
+            + np.abs(ey) ** 2 + np.abs(ey_q) ** 2
+            + np.abs(ez) ** 2 + np.abs(ez_q) ** 2
+        )
+        print(f"[{prefix}] using quarter-period amplitude (true |E|^2)")
+    else:
+        e2 = np.abs(ex) ** 2 + np.abs(ey) ** 2 + np.abs(ez) ** 2
+        print(f"[{prefix}] single instantaneous snapshot (phase-dependent)")
     return e2, eps
 
 

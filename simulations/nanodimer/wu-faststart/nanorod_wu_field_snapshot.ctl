@@ -219,10 +219,19 @@
 ; ----------------------------
 ; Run and output
 ; ----------------------------
+; The CW period is T = 1/freq = wvl (in Meep units, c = 1).  A second snapshot
+; taken a quarter period later lets the plotter recover the phase-independent
+; steady-state amplitude:  |E_amp|^2 = E(t)^2 + E(t+T/4)^2.  This costs only
+; ~T/4 of extra stepping on top of the main run (not a second full run), and the
+; "_q" files are optional: if they are absent the plotter falls back to a single
+; instantaneous snapshot.
+(define quarter-period (/ wvl 4.0))
+
 (print "field-snapshot: wvl=" wvl " phi=" phi " theta=" theta
        " gap=" gap " rod-tip-gap=" rod-tip-gap
-       " res=" res " nbg=" nbg "\n")
+       " res=" res " nbg=" nbg " quarter-period=" quarter-period "\n")
 
+; --- Phase A: snapshot at t = run_time (also writes the static epsilon) ---
 (run-until run_time
   (at-end
    (to-appended "xy_rod_eps" (in-volume xy-rod-volume output-epsilon)))
@@ -250,3 +259,26 @@
    (to-appended "xz_ey" (in-volume xz-volume output-efield-y)))
   (at-end
    (to-appended "xz_ez" (in-volume xz-volume output-efield-z))))
+
+; --- Phase B: snapshot a quarter period later (fields only, no epsilon) ---
+(run-until (+ run_time quarter-period)
+  (at-end
+   (to-appended "xy_rod_ex_q" (in-volume xy-rod-volume output-efield-x)))
+  (at-end
+   (to-appended "xy_rod_ey_q" (in-volume xy-rod-volume output-efield-y)))
+  (at-end
+   (to-appended "xy_rod_ez_q" (in-volume xy-rod-volume output-efield-z)))
+
+  (at-end
+   (to-appended "xy_above_ex_q" (in-volume xy-above-volume output-efield-x)))
+  (at-end
+   (to-appended "xy_above_ey_q" (in-volume xy-above-volume output-efield-y)))
+  (at-end
+   (to-appended "xy_above_ez_q" (in-volume xy-above-volume output-efield-z)))
+
+  (at-end
+   (to-appended "xz_ex_q" (in-volume xz-volume output-efield-x)))
+  (at-end
+   (to-appended "xz_ey_q" (in-volume xz-volume output-efield-y)))
+  (at-end
+   (to-appended "xz_ez_q" (in-volume xz-volume output-efield-z))))
