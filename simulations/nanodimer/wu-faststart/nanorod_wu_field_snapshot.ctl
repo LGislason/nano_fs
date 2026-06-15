@@ -261,7 +261,9 @@
    (to-appended "xz_ez" (in-volume xz-volume output-efield-z))))
 
 ; --- Phase B: snapshot a quarter period later (fields only, no epsilon) ---
-(run-until (+ run_time quarter-period)
+; NOTE: run-until takes a DURATION (extra time to run from the current t), not an
+; absolute stop time, so this advances by exactly T/4 beyond Phase A.
+(run-until quarter-period
   (at-end
    (to-appended "xy_rod_ex_q" (in-volume xy-rod-volume output-efield-x)))
   (at-end
