@@ -17,9 +17,9 @@ from matplotlib.patches import Rectangle
 
 
 SLICES = [
-    ("xy_rod", "XY at rod midplane (z=0 nm)", "x (um)", "y (um)"),
-    ("xy_above", "XY above rods (z=+30 nm)", "x (um)", "y (um)"),
-    ("xz", "XZ at y=0", "x (um)", "z (um)"),
+    ("xy_rod", "Rod midplane (z = 0)", "x (nm)", "y (nm)"),
+    ("xy_above", "30 nm above rods", "x (nm)", "y (nm)"),
+    ("xz", "Vertical cut (y = 0)", "x (nm)", "z (nm)"),
 ]
 
 # These match the output volumes in nanorod_wu_field_snapshot.ctl:
@@ -29,6 +29,21 @@ FIELD_SY = 0.52
 FIELD_SZ = 0.92
 ROD_LENGTH = 0.069
 ROD_WIDTH = 0.024
+NM = 1000.0  # um -> nm for axis display
+
+# Publication-style defaults (kept local so the script stays self-contained).
+PLOT_STYLE = {
+    "font.family": "DejaVu Sans",
+    "font.size": 11,
+    "axes.titlesize": 12,
+    "axes.labelsize": 10,
+    "axes.linewidth": 0.8,
+    "xtick.labelsize": 8,
+    "ytick.labelsize": 8,
+    "figure.dpi": 150,
+    "savefig.dpi": 300,
+    "savefig.bbox": "tight",
+}
 
 
 def first_dataset(group: h5py.Group) -> np.ndarray:
@@ -139,9 +154,9 @@ def image_data(field: np.ndarray) -> np.ndarray:
 
 def image_extent(prefix: str) -> tuple[float, float, float, float]:
     if prefix.startswith("xy_"):
-        return (-FIELD_SX / 2, FIELD_SX / 2, -FIELD_SY / 2, FIELD_SY / 2)
+        return (-FIELD_SX / 2 * NM, FIELD_SX / 2 * NM, -FIELD_SY / 2 * NM, FIELD_SY / 2 * NM)
     if prefix == "xz":
-        return (-FIELD_SX / 2, FIELD_SX / 2, -FIELD_SZ / 2, FIELD_SZ / 2)
+        return (-FIELD_SX / 2 * NM, FIELD_SX / 2 * NM, -FIELD_SZ / 2 * NM, FIELD_SZ / 2 * NM)
     raise ValueError(f"Unknown slice prefix: {prefix}")
 
 
@@ -193,11 +208,11 @@ def add_analytic_rods(ax: plt.Axes, params: dict[str, float], linewidth: float =
     rods, (tip1, tip2) = rod_geometry(params)
     for center, angle in rods:
         x, y = capsule_outline(center, angle)
-        ax.plot(x, y, color="cyan", linewidth=linewidth, solid_capstyle="round")
+        ax.plot(x * NM, y * NM, color="white", linewidth=linewidth, solid_capstyle="round")
     ax.plot(
-        [tip1[0], tip2[0]],
-        [tip1[1], tip2[1]],
-        color="cyan",
+        [tip1[0] * NM, tip2[0] * NM],
+        [tip1[1] * NM, tip2[1] * NM],
+        color="white",
         linewidth=max(linewidth, 1.0),
         solid_capstyle="round",
     )
@@ -269,11 +284,11 @@ def add_gap_zoom(
         interpolation="nearest",
     )
     add_analytic_rods(ax, params, linewidth=1.0)
-    ax.set_xlim(-zoom_half_width, zoom_half_width)
-    ax.set_ylim(-zoom_half_width, zoom_half_width)
+    ax.set_xlim(-zoom_half_width * NM, zoom_half_width * NM)
+    ax.set_ylim(-zoom_half_width * NM, zoom_half_width * NM)
     ax.set_title("Gap zoom")
-    ax.set_xlabel("x (um)")
-    ax.set_ylabel("y (um)")
+    ax.set_xlabel("x (nm)")
+    ax.set_ylabel("y (nm)")
     ax.set_aspect("equal")
     return im
 
@@ -297,33 +312,39 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    fig, axes = plt.subplots(2, 2, figsize=(10.5, 9.2), constrained_layout=True)
-    flat_axes = axes.ravel()
-    slices: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    plt.rcParams.update(PLOT_STYLE)
     params = run_params(args.input_dir)
+
+    # Layout: top row keeps the rod midplane and ITS gap zoom side by side
+    # (the zoomed-out view next to the zoom); bottom row holds the other cuts.
+    #   [ rod midplane ][ gap zoom ]
+    #   [ 30nm above   ][  y=0 cut ]
+    fig, axes = plt.subplots(2, 2, figsize=(10.6, 9.4), constrained_layout=True)
+    ax_full, ax_zoom = axes[0, 0], axes[0, 1]
+    ax_above, ax_xz = axes[1, 0], axes[1, 1]
+    panel_axis = {"xy_rod": ax_full, "xy_above": ax_above, "xz": ax_xz}
+
+    slices: dict[str, tuple[np.ndarray, np.ndarray]] = {}
     im = None
-    for ax, (prefix, title, xlabel, ylabel) in zip(flat_axes[:3], SLICES):
+    for prefix, title, xlabel, ylabel in SLICES:
         field, eps = load_slice(args.input_dir, prefix)
         field = normalize(field, args.contrast, args.vmax_percentile)
         slices[prefix] = (field, eps)
-        im = plot_slice(ax, prefix, title, xlabel, ylabel, field, eps, params)
+        im = plot_slice(panel_axis[prefix], prefix, title, xlabel, ylabel, field, eps, params)
 
     xy_field, xy_eps = slices["xy_rod"]
-    im = add_gap_zoom(flat_axes[3], xy_field, xy_eps, params, args.zoom_half_width)
-    zoom_box = Rectangle(
-        (-args.zoom_half_width, -args.zoom_half_width),
-        2 * args.zoom_half_width,
-        2 * args.zoom_half_width,
-        fill=False,
-        edgecolor="cyan",
-        linewidth=0.7,
-    )
-    flat_axes[0].add_patch(zoom_box)
+    im = add_gap_zoom(ax_zoom, xy_field, xy_eps, params, args.zoom_half_width)
+    # Mark the zoomed region on the full rod-midplane panel (units are nm).
+    zb = args.zoom_half_width * NM
+    ax_full.add_patch(Rectangle((-zb, -zb), 2 * zb, 2 * zb, fill=False,
+                                edgecolor="white", linewidth=0.8, linestyle="--"))
 
-    fig.suptitle(args.input_dir.name)
-    fig.colorbar(im, ax=flat_axes, shrink=0.82, label=f"{args.contrast} field, p{args.vmax_percentile:g}=1")
+    fig.suptitle(args.input_dir.name, fontsize=12)
+    label = ("relative near-field contrast" if args.contrast == "relative"
+             else r"$|E|^2$ (a.u.)") + f"  (p{args.vmax_percentile:g} = 1)"
+    fig.colorbar(im, ax=axes, shrink=0.85, pad=0.02, label=label)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(args.output, dpi=250)
+    fig.savefig(args.output)
     plt.close(fig)
     print(f"Wrote {args.output}")
 

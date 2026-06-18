@@ -43,10 +43,45 @@ import matplotlib
 import numpy as np
 
 matplotlib.use("Agg")
+import re
+
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
 FIELD_SX = 0.52  # um, lateral half-extent * 2 of the xy output volumes
+ZOOM_NM = 65.0   # half-width of the gap-zoom panel, nm
+
+# Publication-style defaults (kept local so the script stays self-contained).
+PLOT_STYLE = {
+    "font.family": "DejaVu Sans",
+    "font.size": 11,
+    "axes.titlesize": 12,
+    "axes.labelsize": 11,
+    "axes.linewidth": 0.8,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "xtick.direction": "out",
+    "ytick.direction": "out",
+    "figure.dpi": 150,
+    "savefig.dpi": 300,
+    "savefig.bbox": "tight",
+}
+
+
+def parse_case(name: str) -> str:
+    """Build a human-readable parameter subtitle from a results-dir name."""
+    bits = []
+    for label, pat, fmt in (
+        ("theta", r"theta(\d+)", lambda v: f"θ = {int(v)}°"),
+        ("phi", r"phi(\d+)", lambda v: f"φ = {int(v)}°"),
+        ("gap", r"gap(\d+)nm", lambda v: f"gap = {int(v)} nm"),
+        ("wvl", r"wvl(\d+)", lambda v: f"λ = {int(v)} nm"),
+    ):
+        m = re.search(pat, name)
+        if m:
+            bits.append(fmt(m.group(1)))
+    return ",  ".join(bits)
 
 
 # --------------------------------------------------------------------------- #
@@ -188,24 +223,49 @@ def main() -> None:
     if args.save_vmax:
         args.save_vmax.write_text(f"{vmax:.6g}\n")
 
+    # ---- publication-style figure: full slice | gap zoom, side by side ----
+    plt.rcParams.update(PLOT_STYLE)
     out = args.output or args.input_dir / f"enhancement_{args.slice}.png"
-    enh_plot = np.where(masked, np.nan, enh).T  # hide metal, transpose to image orientation
-    extent = (-FIELD_SX / 2, FIELD_SX / 2, -FIELD_SX / 2, FIELD_SX / 2)
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.6), constrained_layout=True)
+    half = FIELD_SX / 2 * 1000.0  # nm
+    extent = (-half, half, -half, half)
+    enh_img = np.where(masked, np.nan, enh).T  # hide metal, transpose to image orientation
+    eps_img = eps.T if eps is not None else None
+
     cmap = plt.cm.inferno.copy()
-    cmap.set_bad("dimgray")
+    cmap.set_bad("0.55")  # neutral grey for masked metal
     norm = mcolors.LogNorm(vmin=vmin, vmax=vmax)
-    for ax, zoom in ((axes[0], None), (axes[1], 0.065)):
-        im = ax.imshow(enh_plot, origin="lower", extent=extent, cmap=cmap, norm=norm, interpolation="nearest")
+
+    fig, axes = plt.subplots(1, 2, figsize=(11.0, 4.9), constrained_layout=True)
+    im = None
+    for ax, zoom, title in ((axes[0], None, "Full slice"), (axes[1], ZOOM_NM, "Gap zoom")):
+        im = ax.imshow(enh_img, origin="lower", extent=extent, cmap=cmap, norm=norm,
+                       interpolation="nearest", rasterized=True)
+        if eps_img is not None and eps_img.max() > args.metal_threshold:  # outline the metal
+            xs = np.linspace(-half, half, eps_img.shape[1])
+            ys = np.linspace(-half, half, eps_img.shape[0])
+            ax.contour(xs, ys, eps_img, levels=[args.metal_threshold],
+                       colors="white", linewidths=0.9, alpha=0.9)
         ax.set_aspect("equal")
-        ax.set_xlabel("x (um)"); ax.set_ylabel("y (um)")
+        ax.set_xlabel("x (nm)")
+        ax.set_ylabel("y (nm)")
+        ax.set_title(title)
         if zoom:
-            ax.set_xlim(-zoom, zoom); ax.set_ylim(-zoom, zoom); ax.set_title("Gap zoom")
+            ax.set_xlim(-zoom, zoom)
+            ax.set_ylim(-zoom, zoom)
         else:
-            ax.set_title(f"{args.slice}  |E|^2/|E0|^2  (peak~{p999:.2g}x)")
-    fig.colorbar(im, ax=axes, shrink=0.85, label="|E|^2 / |E0|^2  (metal masked, log scale)")
-    fig.suptitle(args.input_dir.name)
-    fig.savefig(out, dpi=220)
+            ax.add_patch(Rectangle((-ZOOM_NM, -ZOOM_NM), 2 * ZOOM_NM, 2 * ZOOM_NM,
+                                   fill=False, edgecolor="white", linewidth=0.8, linestyle="--"))
+            ax.text(0.04, 0.96, f"peak ≈ {p999:.0f}×", transform=ax.transAxes,
+                    va="top", ha="left", color="white", fontsize=10,
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor="black", alpha=0.55, edgecolor="none"))
+
+    cbar = fig.colorbar(im, ax=axes, shrink=0.92, pad=0.02,
+                        label=r"intensity enhancement  $|E|^2 / |E_0|^2$")
+    cbar.ax.tick_params(labelsize=9)
+    subtitle = parse_case(args.input_dir.name)
+    fig.suptitle(f"Near-field intensity enhancement\n{subtitle}" if subtitle
+                 else "Near-field intensity enhancement", fontsize=12)
+    fig.savefig(out)
     plt.close(fig)
 
     np.savetxt(args.input_dir / f"enhancement_{args.slice}.txt", enh,
