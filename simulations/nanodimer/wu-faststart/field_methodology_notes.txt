@@ -1,0 +1,78 @@
+# Field Enhancement Calculation: Methods and Caveats
+
+**Case analyzed:** symmetric nanorod dimer, theta = 80 deg, gap = 6 nm, phi = 120 deg, lambda = 790 nm (main / bonding band). Slice: XY at rod midplane (z = 0).
+
+## What was computed
+
+The goal was to convert the field-snapshot output from a self-normalized picture (each panel scaled to its own 99.5 percentile) into an absolute field-intensity enhancement, |E|^2 / |E0|^2, which is the physically meaningful quantity for predicting emission enhancement.
+
+### Step 1: true amplitude from the quarter-period pairs
+
+The control file outputs each field component at time t and again at t + T/4 (the "_q" files). Because a steady-state field oscillates sinusoidally, sampling a quarter period apart captures the cosine and sine parts, and per component:
+
+    |E_amp|^2 = E(t)^2 + E(t + T/4)^2
+
+since cos^2 + sin^2 = 1. Summing over the three Cartesian components gives the phase-independent intensity:
+
+    |E|^2 = Ex^2 + Ex_q^2 + Ey^2 + Ey_q^2 + Ez^2 + Ez_q^2
+
+This removes the dependence on which instant the snapshot was taken, which a single-time field cannot do.
+
+### Step 2: incident reference |E0|^2
+
+The enhancement is defined relative to the incident field. Here |E0|^2 was estimated as the median |E|^2 over the outer 8-pixel border of the field-output region, i.e. the background plane wave far from the dimer. For this slice that value is approximately 0.047 in the simulation's source-normalized units. The four corners agree to within roughly 15 percent, indicating a reasonably uniform incident reference.
+
+### Step 3: enhancement map
+
+    enhancement = |E|^2 / |E0|^2
+
+plotted on a log color scale, full midplane and gap zoom.
+
+## Results (with appropriate caution)
+
+- **Order of magnitude in the junction: ~10^3** intensity enhancement. The robust peak (99.9 percentile) is about 1.4 x 10^3.
+- The single-pixel maximum is ~3 x 10^4, but only 3 pixels exceed 10^4 and they sit directly on the metal boundary. This is consistent with a staircasing artifact (see caveats) and should NOT be quoted as the physical enhancement.
+- Defensible headline statement: "intensity enhancement of order 10^3 in the gap junction for the bonding mode."
+
+## Caveats (important; record before these details are forgotten)
+
+1. **Absolute normalization depends on the source.** The incident |E0|^2 is ~0.047, not 1, because the source amplitude in the CTL is not unity. The *ratio* (local / background) is what is physical and is robust to this. For a publication-grade absolute number, run a separate no-dimer reference simulation to obtain a clean |E0|^2, or normalize against the recorded incident flux used in the spectra runs.
+
+2. **Corner reference may be slightly contaminated.** The field-output box is only ~0.2 um from the dimer, so the corners can contain a small amount of scattered field. This can bias |E0|^2 by a modest amount. A larger reference box or a no-dimer run would remove the ambiguity.
+
+3. **Staircasing artifacts at the metal surface.** On a Cartesian FDTD grid, sharp metal corners and the curved capsule surface are approximated by stair-steps, producing spurious single-pixel field spikes at the boundary. The ~3 x 10^4 peak is almost certainly such an artifact. Use percentile-based (99.9) peaks or gap-region statistics, not the raw maximum.
+
+4. **Under-resolved gap.** The field snapshot is res = 300 (~3.3 nm voxels), so a 6 nm gap is spanned by only ~1.8 voxels: still spatially under-sampled and smeared. (Note: the broadband spectra sweep is res = 200; the field arrays here are 159 x 159, which corresponds to res = 300, not 200.) The true peak enhancement is likely *higher* than this grid captures. Higher resolution (which needs better compute) would sharpen and increase the gap value.
+
+5. **6 nm gap is conservative.** The reference (Wu) uses ~1 nm. A 1 nm gap would give substantially stronger coupling and higher enhancement, so the ~10^3 figure is a floor relative to what is physically achievable, not a ceiling.
+
+## Why this matters
+
+Second-harmonic generation scales as the square of the local intensity, so an intensity enhancement of order 10^3 implies an SHG signal enhancement of up to order 10^6 at the hotspot. This is the quantitative basis for using the dimer/metasurface to boost nonlinear emission from a 2D material (e.g. hBN) placed in the junction.
+
+## Reproducibility note
+
+The field arrays were read directly from the Meep HDF5 output (159 x 159 float64, contiguous). To make a clean shared-absolute-scale comparison between modes (e.g. phi = 40 antibonding vs phi = 120 bonding), the phi = 40 case should be re-exported as |E|^2 / |E0|^2 from its HDF5 data using the same procedure, rather than compared against a self-normalized PNG.
+
+## Resolution status (tooling added)
+
+The procedure above is now implemented in `compute_field_enhancement.py`, which
+resolves several of the caveats so they no longer depend on a one-off script:
+
+- Caveat 3 (staircasing): the script masks metal + a 1-pixel surface ring using
+  the eps slice and reports the 99.9-percentile and gap-box statistics, never the
+  raw maximum. The on-boundary single-pixel spikes are excluded automatically.
+- Caveats 1 & 2 (source-dependent / contaminated reference): the snapshot CTL now
+  takes `dimer=0` to run an identical no-metal reference; pass that run via
+  `--reference-dir` to normalize against a clean incident |E0|^2 instead of the
+  panel border.
+- Reproducibility / cross-mode comparison: run the same script on each case;
+  `--save-vmax`/`--shared-vmax` put two modes on one absolute log color scale.
+- Caveats 4 & 5 (under-resolved 6 nm gap, vs the ~1 nm reference) remain
+  compute-bound: they are honest physical limits of this build, so the order-10^3
+  figure stays a floor, not a ceiling.
+
+Example for the matched comparison this note asks for:
+
+    python compute_field_enhancement.py field_sym_..._phi040_wvl0672 --save-vmax /tmp/v
+    python compute_field_enhancement.py field_sym_..._phi120_wvl0792 --shared-vmax $(cat /tmp/v)

@@ -22,6 +22,7 @@
 (if (not (defined? 'wvl))      (define wvl 0.672))
 (if (not (defined? 'run_time)) (define run_time 300))
 (if (not (defined? 'pol))      (define pol 0)) ; 0 Ex, 1 Ey
+(if (not (defined? 'dimer))    (define dimer 1)) ; 1 = dimer present, 0 = empty no-metal reference (for clean |E0|^2)
 
 ; ----------------------------
 ; Gold model: Drude + 3 Lorentz terms
@@ -176,10 +177,14 @@
 (define rod2-ux (cos rod2-ang))
 (define rod2-uy (sin rod2-ang))
 
+; dimer=1 builds the two capsule rods; dimer=0 leaves the cell as homogeneous
+; background so the same source/slices yield a clean incident |E0|^2 reference.
 (set! geometry
-      (append
-       (make-capsule-rod rod1-cx rod1-cy rod-z rod1-ux rod1-uy 0)
-       (make-capsule-rod rod2-cx rod2-cy rod-z rod2-ux rod2-uy 0)))
+      (if (= dimer 0)
+          (list)
+          (append
+           (make-capsule-rod rod1-cx rod1-cy rod-z rod1-ux rod1-uy 0)
+           (make-capsule-rod rod2-cx rod2-cy rod-z rod2-ux rod2-uy 0))))
 
 ; ----------------------------
 ; Source
@@ -229,7 +234,8 @@
 
 (print "field-snapshot: wvl=" wvl " phi=" phi " theta=" theta
        " gap=" gap " rod-tip-gap=" rod-tip-gap
-       " res=" res " nbg=" nbg " quarter-period=" quarter-period "\n")
+       " res=" res " nbg=" nbg " dimer=" dimer
+       " quarter-period=" quarter-period "\n")
 
 ; --- Phase A: snapshot at t = run_time (also writes the static epsilon) ---
 (run-until run_time
