@@ -170,7 +170,10 @@ def main() -> None:
     ap.add_argument("--border", type=int, default=8, help="Border width for the fallback reference.")
     ap.add_argument("--metal-threshold", type=float, default=2.5,
                     help="eps above this is treated as metal (bg=nbg^2~1.64, Au eps_inf~4.89).")
-    ap.add_argument("--grow", type=int, default=1, help="Pixels to grow the metal mask (kills boundary spikes).")
+    ap.add_argument("--grow", type=int, default=0,
+                    help="Pixels to grow the metal mask. 0 keeps narrow gaps visible "
+                         "(default); 1 also masks the boundary ring but can swallow a "
+                         "sub-2-pixel gap. Percentile stats already suppress boundary spikes.")
     ap.add_argument("--gap-halfwidth", type=float, default=0.02, help="Half-width (um) of the gap stats box.")
     ap.add_argument("--shared-vmax", type=float, default=None, help="Fix the color-scale max for cross-case comparison.")
     ap.add_argument("--save-vmax", type=Path, default=None, help="Write the chosen vmax here (feed to --shared-vmax).")

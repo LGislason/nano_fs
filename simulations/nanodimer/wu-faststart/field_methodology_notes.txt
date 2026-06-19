@@ -59,9 +59,13 @@ The field arrays were read directly from the Meep HDF5 output (159 x 159 float64
 The procedure above is now implemented in `compute_field_enhancement.py`, which
 resolves several of the caveats so they no longer depend on a one-off script:
 
-- Caveat 3 (staircasing): the script masks metal + a 1-pixel surface ring using
-  the eps slice and reports the 99.9-percentile and gap-box statistics, never the
-  raw maximum. The on-boundary single-pixel spikes are excluded automatically.
+- Caveat 3 (staircasing): the script masks the metal pixels using the eps slice
+  and reports the 99.9-percentile and gap-box statistics, never the raw maximum,
+  so on-boundary single-pixel spikes do not set the headline. NOTE: growing the
+  mask by a boundary ring (--grow 1) will swallow a sub-2-pixel gap (6 nm gap is
+  ~1.8 px at res 300), painting the junction grey and hiding the hotspot; the
+  default is now --grow 0 so the gap stays visible. Percentile reporting still
+  suppresses the boundary spikes without the ring.
 - Caveats 1 & 2 (source-dependent / contaminated reference): the snapshot CTL now
   takes `dimer=0` to run an identical no-metal reference; pass that run via
   `--reference-dir` to normalize against a clean incident |E0|^2 instead of the
