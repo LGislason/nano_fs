@@ -147,6 +147,24 @@ def metal_mask(eps: np.ndarray | None, threshold: float, grow: int) -> np.ndarra
     return m
 
 
+def spike_mask(field: np.ndarray, metal: np.ndarray, factor: float) -> np.ndarray:
+    """Flag isolated single-pixel staircasing spikes: a non-metal pixel that is
+    more than `factor` times its BRIGHTEST 8-neighbour. A real hotspot - even a
+    1-2 pixel gap - has at least one comparably bright neighbour, so it is NOT
+    flagged; a lone boundary spike towers over all of its neighbours and is.
+    factor <= 0 disables."""
+    if factor <= 0 or field.shape != metal.shape:
+        return np.zeros_like(field, dtype=bool)
+    nbr_max = np.full_like(field, -np.inf)
+    for dy in (-1, 0, 1):
+        for dx in (-1, 0, 1):
+            if dx == 0 and dy == 0:
+                continue
+            nbr_max = np.maximum(nbr_max, np.roll(np.roll(field, dy, axis=0), dx, axis=1))
+    spikes = field > factor * np.maximum(nbr_max, 1e-30)
+    return spikes & ~metal
+
+
 def incident_reference(
     field: np.ndarray, border: int, reference_dir: Path | None, prefix: str
 ) -> tuple[float, str]:
@@ -174,6 +192,10 @@ def main() -> None:
                     help="Pixels to grow the metal mask. 0 keeps narrow gaps visible "
                          "(default); 1 also masks the boundary ring but can swallow a "
                          "sub-2-pixel gap. Percentile stats already suppress boundary spikes.")
+    ap.add_argument("--despike", type=float, default=8.0,
+                    help="Flag isolated staircasing spikes brighter than this multiple of "
+                         "their 8-neighbour median and mask them (keeps the gap, drops lone "
+                         "boundary spikes). 0 disables.")
     ap.add_argument("--gap-halfwidth", type=float, default=0.02, help="Half-width (um) of the gap stats box.")
     ap.add_argument("--shared-vmax", type=float, default=None, help="Fix the color-scale max for cross-case comparison.")
     ap.add_argument("--save-vmax", type=Path, default=None, help="Write the chosen vmax here (feed to --shared-vmax).")
@@ -186,9 +208,12 @@ def main() -> None:
         raise SystemExit("Non-positive |E0|^2; cannot normalize.")
     enh = field / e0_sq
 
-    masked = metal_mask(eps, args.metal_threshold, args.grow)
-    if masked.shape != enh.shape:
-        masked = np.zeros_like(enh, dtype=bool)
+    metal = metal_mask(eps, args.metal_threshold, args.grow)
+    if metal.shape != enh.shape:
+        metal = np.zeros_like(enh, dtype=bool)
+    spikes = spike_mask(enh, metal, args.despike)
+    masked = metal | spikes
+    n_spikes = int(spikes.sum())
     valid = enh[~masked]
 
     # gap-region box (dielectric pixels only)
@@ -212,8 +237,8 @@ def main() -> None:
         "p99.5_excluding_metal": float(np.percentile(valid, 99.5)) if valid.size else float("nan"),
         "gap_box_p99.9": float(np.percentile(gapvals, 99.9)) if gapvals.size else float("nan"),
         "gap_box_median": float(np.median(gapvals)) if gapvals.size else float("nan"),
-        "n_pixels_over_1e4_on_metal_ring": int(np.sum((enh > 1e4) & masked)),
-        "metal_pixels_masked": int(np.sum(masked)),
+        "staircasing_spikes_removed": n_spikes,
+        "metal_pixels_masked": int(np.sum(metal)),
     }
 
     print("=== field enhancement |E|^2/|E0|^2 ===")
