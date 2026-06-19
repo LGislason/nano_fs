@@ -12,30 +12,33 @@ procedure recorded in the field methodology note. The incident reference |E0|^2
 was taken from a separate no-metal run using the identical source and cell with
 the dimer removed; because the background medium is non-dispersive, this single
 reference (|E0|^2 = 0.079 in source-normalized units) applies at every
-wavelength. Metal pixels and the one-pixel ring around them were masked using the
-dielectric slice so that grid-staircasing spikes on the gold boundary cannot
-inflate the reported values, and peak enhancements are quoted as the 99.9th
-percentile of the masked field and within a +/- 20 nm gap box rather than as the
-raw maximum.
+wavelength. Metal pixels are masked using the dielectric slice and isolated
+single-pixel staircasing spikes are removed by a neighbour comparison; because
+the 6 nm gap is only ~2 pixels wide at this resolution, the single hottest pixels
+sit on the gold tip surface and are resolution-limited, so enhancements are
+reported as a robust percentile of the field and as a typical (median) gap value
+rather than as the raw maximum.
 
 At the main near-infrared band (lambda ~ 0.79 um, phi = 120 deg — the bonding
-orientation), the dimer junction shows an intensity enhancement of order 10^3,
-with a robust gap-region peak near 4.5 x 10^3 and a median gap enhancement near
-90x. The short-wavelength band (lambda ~ 0.67 um, phi = 40 deg) is markedly
-weaker in the junction, with a gap-region peak near 2.9 x 10^2 and a median near
-50x. Because both maps are normalized to the same incident reference, the
-roughly fifteen-fold stronger junction field of the phi = 120 deg mode is a
-direct, like-for-like comparison and is the expected signature of the bonding
-mode, in which charge accumulates across the gap. Away from the dimer the
-enhancement relaxes to unity, which confirms the reference normalization.
+orientation), the dimer junction shows an intensity enhancement of order 10^3: a
+robust 99.9th-percentile of about 840x across the slice and a typical (median)
+gap enhancement near 170x. The single hottest pixels reach ~10^4 but lie on the
+gold tip surface and are resolution-limited, so they are not quoted as the
+enhancement. The short-wavelength band (lambda ~ 0.67 um, phi = 40 deg) is
+weaker, with a robust peak near 330x and a median gap value near 50x. Because
+both maps are normalized to the same incident reference, the bonding mode being
+roughly three times stronger in the junction is a direct, like-for-like
+comparison and the expected signature of the bonding mode, in which charge
+accumulates across the gap. Away from the dimer the enhancement relaxes to unity,
+which confirms the reference normalization.
 
-Because second-harmonic generation scales as the square of the local intensity,
-a junction intensity enhancement of order 4.5 x 10^3 implies a local SHG
-enhancement of order 10^7, which is the quantitative motivation for placing a 2D
-emitter such as hBN in the gap. These values should be read as lower bounds: at
-the present resolution (~3.3 nm voxels) the 6 nm gap is spanned by only about two
-cells, so the true peak is spatially under-sampled, and the reference geometry's
-~1 nm gap would couple more strongly still.
+Because second-harmonic generation scales as the square of the local intensity, a
+junction intensity enhancement of order 10^3 implies a local SHG enhancement of
+order 10^6, which is the quantitative motivation for placing a 2D emitter such as
+hBN in the gap. These values should be read as lower bounds: at the present
+resolution (~3.3 nm voxels) the 6 nm gap is spanned by only about two cells, so
+the field is spatially under-sampled, and the reference geometry's ~1 nm gap
+would couple more strongly still.
 
 ---
 
@@ -53,9 +56,12 @@ Right: gap zoom showing the junction hotspot. The far-field level relaxes to
 
 | metric (|E|^2/|E0|^2) | phi = 40 deg (short, 0.67 um) | phi = 120 deg (bonding, 0.79 um) |
 | --- | --- | --- |
-| robust slice peak (99.9 pct) | 181x | 446x |
-| gap-box peak (99.9 pct) | 291x | 4540x |
-| gap-box median | 49x | 91x |
-| spurious >1e4 metal-ring px (masked) | 0 | 2 (raw max 19393x before masking) |
+| robust slice peak (99.9 pct) | 331x | 838x |
+| typical gap value (median) | 51x | 173x |
+| on-surface max (resolution-limited; do NOT quote) | ~0.9x10^3 | ~1.9x10^4 |
 
 Reference: |E0|^2 = 0.0793 (no-dimer run `ref_wvl0672`, same for both cases).
+Values from `--grow 0` (gap kept visible) with default despike. The on-surface
+maximum sits on the under-resolved gold tip and is not grid-robust; headline the
+99.9-percentile and median instead. The bonding/short ratio is ~2.5x on the
+robust peak and ~3.4x on the median.
