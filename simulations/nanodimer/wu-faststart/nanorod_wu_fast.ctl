@@ -27,6 +27,12 @@
 (if (not (defined? 'wvl_max))   (define wvl_max 0.95))
 (if (not (defined? 'decay_time)) (define decay_time 30))
 (if (not (defined? 'decay_tol))  (define decay_tol 1e-4))
+(if (not (defined? 'pol))        (define pol 0)) ; 0 = Ex source, 1 = Ey source
+
+; Source / decay-monitor component follows the polarization. Summing pol=0 and
+; pol=1 at phi=0 gives an orientation-independent (polarization-averaged) response,
+; which isolates the structure-angle (theta) dependence from rod reorientation.
+(define src-comp (if (= pol 0) Ex Ey))
 
 ; ----------------------------
 ; Gold model: Drude + 3 Lorentz terms
@@ -214,7 +220,7 @@
       (list
        (make source
              (src (make gaussian-src (frequency fcen) (fwidth df)))
-             (component Ex)
+             (component src-comp)
              (center (vector3 0 0 src-z))
              (size (vector3 monitor-sx monitor-sy 0)))))
 
@@ -232,8 +238,9 @@
 (define tran 0)
 
 (define decay-point (vector3 0 0 0))
-(define flux-tag-refl "wu_fast_refl_ref")
-(define flux-tag-tran "wu_fast_tran_ref")
+; pol-specific so an Ex reference is never subtracted from an Ey run (and vice versa)
+(define flux-tag-refl (string-append "wu_fast_refl_ref_p" (if (= pol 0) "0" "1")))
+(define flux-tag-tran (string-append "wu_fast_tran_ref_p" (if (= pol 0) "0" "1")))
 
 ; ----------------------------
 ; Run
@@ -244,7 +251,7 @@
       (set! refl (add-flux fcen df nfreq refl-region))
       (set! tran (add-flux fcen df nfreq tran-region))
       (run-sources+
-       (stop-when-fields-decayed decay_time Ex decay-point decay_tol))
+       (stop-when-fields-decayed decay_time src-comp decay-point decay_tol))
       (save-flux flux-tag-refl refl)
       (save-flux flux-tag-tran tran)
       (display-fluxes refl tran))
@@ -255,5 +262,5 @@
       (load-minus-flux flux-tag-refl refl)
       (load-minus-flux flux-tag-tran tran)
       (run-sources+
-       (stop-when-fields-decayed decay_time Ex decay-point decay_tol))
+       (stop-when-fields-decayed decay_time src-comp decay-point decay_tol))
       (display-fluxes refl tran)))
