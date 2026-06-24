@@ -107,49 +107,56 @@ def main():
         wl1, p1 = proxy(ref1, d / f"theta_{th:03d}_pol_1.txt", args.quantity)
         ysum = p0 + p1  # orientation-independent (Ex + Ey)
         spectra[th] = (wl0, ysum)
+        dom = float(wl0[np.argmax(ysum)])             # dominant peak (clean, no windows)
         sc, sv = band_center(wl0, ysum, *args.short_window)
         mc, mv = band_center(wl0, ysum, *args.main_window)
-        table.append((th, sc, sv, mc, mv))
+        table.append((th, dom, sc, sv, mc, mv))
 
     # ---- report ----
     print(f"Input: {d}  quantity: {args.quantity}  (Ex+Ey polarization sum)")
-    print("theta_deg, short_center_um, short_val, main_center_um, main_val")
-    for th, sc, sv, mc, mv in table:
-        print(f"{th:6d}, {sc:.4f}, {sv:.4g}, {mc:.4f}, {mv:.4g}")
-    scs = [r[1] for r in table]; mcs = [r[3] for r in table]
+    print("theta_deg, dominant_peak_um, short_center_um, main_center_um")
+    for th, dom, sc, sv, mc, mv in table:
+        print(f"{th:6d}, {dom:.4f}, {sc:.4f}, {mc:.4f}")
+    doms = [r[1] for r in table]; scs = [r[2] for r in table]; mcs = [r[4] for r in table]
     def spread(v):
         v = [x for x in v if np.isfinite(x)]
         return (max(v) - min(v)) if v else float("nan")
-    print(f"\nshort-band center spread over theta: {spread(scs)*1000:.1f} nm")
-    print(f"main-band  center spread over theta: {spread(mcs)*1000:.1f} nm")
-    print("(small spread => resonance wavelengths ~independent of structure angle, per Wu)")
+    print(f"\ndominant-peak spread over theta: {spread(doms)*1000:.0f} nm "
+          f"({min(doms)*1000:.0f}-{max(doms)*1000:.0f} nm)")
+    print("(large spread => resonance wavelength DOES shift with structure angle in this regime;")
+    print(" Wu's angle-independence is a tight-gap / small-angle statement, not this 30-150 deg sweep)")
 
     # ---- figure ----
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 11,
                          "axes.titlesize": 12, "savefig.dpi": 300, "savefig.bbox": "tight"})
     fig, (axL, axR) = plt.subplots(1, 2, figsize=(12, 4.8), constrained_layout=True)
 
-    # left: stacked polarization-summed spectra
-    off = 0.0
-    step = 1.1 * max(np.nanmax(y) for _, y in spectra.values())
-    for th in thetas:
+    # left: overlay of polarization-summed spectra, colored by theta, with the
+    # dominant-peak position marked so the wavelength shift is obvious at a glance.
+    cmap = plt.cm.viridis
+    for k, th in enumerate(thetas):
         wl, y = spectra[th]
-        axL.plot(wl, y + off, color=NAVY, lw=1.6)
-        axL.text(wl[-1], off, f"  {th} deg", va="center", fontsize=9, color=NAVY)
-        off += step
-    axL.set_xlabel("wavelength (um)"); axL.set_ylabel(f"{args.quantity} proxy (Ex+Ey, offset)")
-    axL.set_title("Polarization-summed spectra by theta")
-    axL.set_yticks([])
+        c = cmap(k / max(len(thetas) - 1, 1))
+        axL.plot(wl, y, color=c, lw=1.8, label=f"{th} deg")
+        axL.plot(doms[k], np.max(y), "v", color=c, ms=7)
+    axL.set_xlabel("wavelength (um)")
+    axL.set_ylabel(f"{args.quantity} proxy (Ex+Ey)")
+    axL.set_title("Polarization-summed spectra (markers = dominant peak)")
+    axL.legend(frameon=False, fontsize=9, title="theta")
 
-    # right: band centers vs theta
-    axR.plot(thetas, [c * 1000 for c in scs], "o-", color=TEAL, label="short band")
-    axR.plot(thetas, [c * 1000 for c in mcs], "s-", color=GOLD, label="main band")
+    # right: dominant peak vs theta (primary); two-band windows shown faint/secondary
+    axR.plot(thetas, [c * 1000 for c in doms], "o-", color=NAVY, lw=2.2, ms=8,
+             label="dominant peak", zorder=3)
+    axR.plot(thetas, [c * 1000 for c in scs], "^--", color=TEAL, lw=1, ms=5, alpha=0.5,
+             label="short window (secondary)")
+    axR.plot(thetas, [c * 1000 for c in mcs], "s--", color=GOLD, lw=1, ms=5, alpha=0.5,
+             label="main window (secondary)")
     axR.set_xlabel("structure angle theta (deg)")
-    axR.set_ylabel("band center (nm)")
-    axR.set_title("Band center vs theta (flat = Wu-consistent)")
+    axR.set_ylabel("peak wavelength (nm)")
+    axR.set_title(f"Peak vs theta  (shift = {spread(doms)*1000:.0f} nm)")
     axR.grid(True, color="#E2E8F0")
-    axR.legend(frameon=False)
-    fig.suptitle("Structure-angle dependence of the coupled-mode wavelengths", fontsize=12)
+    axR.legend(frameon=False, fontsize=9)
+    fig.suptitle("Structure-angle dependence of the coupled-mode wavelength", fontsize=12)
 
     out = args.output or d / "band_centers_vs_theta.png"
     fig.savefig(out)
