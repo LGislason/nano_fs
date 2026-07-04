@@ -85,29 +85,33 @@
 (define resolution res)
 (set! pml-layers (list (make pml (thickness dpml) (direction Z))))
 (set! ensure-periodicity true)
-; This old Meep can't build REAL fields for an Ex-polarized source in the
-; periodic cell (new_meep_fields fails for pol=0 while pol=1/Ey works). Forcing
-; complex fields makes both polarizations construct.
-(set! force-complex-fields? true)
 
 (define substrate
   (make block (size (vector3 period period 2.0))
         (center (vector3 0 0 -1.0)) (material SiO2)))  ; z in [-2, 0]
 
-(define (hbar cx cy)
+(define (Hbar x y)   ; bar long along X
   (make block (size (vector3 bar-length bar-width metal-z))
-        (center (vector3 cx cy gold-zc)) (material gold-3term)))
-(define (vbar cx cy)
+        (center (vector3 x y gold-zc)) (material gold-3term)))
+(define (Vbar x y)   ; bar long along Y
   (make block (size (vector3 bar-width bar-length metal-z))
-        (center (vector3 cx cy gold-zc)) (material gold-3term)))
+        (center (vector3 x y gold-zc)) (material gold-3term)))
 
-; asymmetric pair: horizontal bar and vertical bar, edge-to-edge gap = gap
 (define center-sep (+ (/ bar-length 2) (/ bar-width 2) gap))
+(define off (* 0.5 center-sep))
+
+; The source is fixed to Ey (this old Meep will not build fields for an Ex source
+; in the periodic cell). On the square period-by-period lattice the Ex response
+; equals the Ey response of the structure rotated 90 deg, so pol=0 ("Ex") uses the
+; 90-deg-rotated geometry [(x,y)->(-y,x), H<->V] and pol=1 ("Ey") uses it as designed.
 (define bars
-  (cond ((= shape 0) (list (hbar 0 0)))
-        ((= shape 1) (list (vbar 0 0)))
-        (else (list (hbar (* -0.5 center-sep) 0)
-                    (vbar (*  0.5 center-sep) 0)))))
+  (if (= pol 1)
+      (cond ((= shape 0) (list (Hbar 0 0)))
+            ((= shape 1) (list (Vbar 0 0)))
+            (else (list (Hbar (- off) 0) (Vbar off 0))))
+      (cond ((= shape 0) (list (Vbar 0 0)))
+            ((= shape 1) (list (Hbar 0 0)))
+            (else (list (Vbar 0 (- off)) (Hbar 0 off))))))
 (define structure (append (list substrate) bars))
 
 ; ----------------------------
@@ -117,7 +121,6 @@
 (define fmax (/ 1 wvl_min))
 (define fcen (* 0.5 (+ fmin fmax)))
 (define df (- fmax fmin))
-(define src-comp (if (= pol 0) Ex Ey))
 
 (define halfz (/ sz 2))
 (define src-z  (- halfz dpml 0.30))       ; 0.70  (vacuum, above the bars)
@@ -131,7 +134,7 @@
 (define src-list
   (list (make source
               (src (make gaussian-src (frequency fcen) (fwidth df)))
-              (component src-comp)
+              (component Ey)              ; always Ey; pol is encoded by rotating the geometry
               (center (vector3 0 0 src-z))
               (size (vector3 period period 0)))))
 (define tag-r (string-append "asym_refl_ref_p" (if (= pol 0) "0" "1")))
