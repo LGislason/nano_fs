@@ -120,42 +120,37 @@
 (define refl-z (- halfz dpml 0.50))       ; 0.50  (between source and structure)
 (define tran-z (+ (- halfz) dpml 0.40))   ; -0.60 (inside the substrate)
 
-(set! sources
-      (list (make source
-                  (src (make gaussian-src (frequency fcen) (fwidth df)))
-                  (component src-comp)
-                  (center (vector3 0 0 src-z))
-                  (size (vector3 period period 0)))))
-
-(define refl-region (make flux-region (center (vector3 0 0 refl-z)) (size (vector3 period period 0))))
-(define tran-region (make flux-region (center (vector3 0 0 tran-z)) (size (vector3 period period 0))))
+(define refl-region
+  (make flux-region (center (vector3 0 0 refl-z)) (size (vector3 period period 0))))
 (define refl 0)
-(define tran 0)
-(define decay-pt (vector3 0 0 refl-z))
+(define run-time 1200)
+(define src-list
+  (list (make source
+              (src (make gaussian-src (frequency fcen) (fwidth df)))
+              (component src-comp)
+              (center (vector3 0 0 src-z))
+              (size (vector3 period period 0)))))
 (define tag-r (string-append "asym_refl_ref_p" (if (= pol 0) "0" "1")))
-(define tag-t (string-append "asym_tran_ref_p" (if (= pol 0) "0" "1")))
 
 (print "asym-metasurface: mode=" mode " shape=" shape " pol=" pol
        " gap=" gap " res=" res " wvl=[" wvl_min "," wvl_max "]\n")
 
 ; ----------------------------
-; Run
+; Run  (structured exactly like the working asym.ctl: sources set inside the
+; run block, run-until for the empty pass, run-sources+ for the structure pass)
 ; ----------------------------
 (if (= mode 0)
     (begin
-      (set! geometry (list))                 ; vacuum reference = incident power
+      (set! geometry (list))            ; vacuum reference = incident power
+      (set! sources src-list)
       (set! refl (add-flux fcen df nfreq refl-region))
-      (set! tran (add-flux fcen df nfreq tran-region))
-      (run-sources+
-       (stop-when-fields-decayed decay_time src-comp decay-pt decay_tol))
+      (run-until run-time)
       (save-flux tag-r refl)
-      (save-flux tag-t tran)
-      (display-fluxes refl tran))
+      (display-fluxes refl))
     (begin
       (set! geometry structure)
+      (set! sources src-list)
       (set! refl (add-flux fcen df nfreq refl-region))
-      (set! tran (add-flux fcen df nfreq tran-region))
-      (load-minus-flux tag-r refl)           ; subtract incident -> reflected only
-      (run-sources+
-       (stop-when-fields-decayed decay_time src-comp decay-pt decay_tol))
-      (display-fluxes refl tran)))
+      (load-minus-flux tag-r refl)       ; subtract incident -> reflected only
+      (run-sources+ 300)
+      (display-fluxes refl)))
