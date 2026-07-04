@@ -80,6 +80,7 @@
 (set! geometry-lattice (make lattice (size (vector3 period period sz))))
 (set! pml-layers (list (make pml (thickness dpml) (direction Z))))
 (set! ensure-periodicity true)
+(set! k-point (vector3 0 0 0))   ; normal incidence; required for the periodic (x,y) cell
 
 (define substrate
   (make block (size (vector3 period period 2.0))
