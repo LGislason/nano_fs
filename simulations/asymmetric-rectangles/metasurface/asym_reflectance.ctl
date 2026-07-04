@@ -78,10 +78,13 @@
 (define sz 4.0)
 (define dpml 1.0)
 (set! dimensions 3)              ; force 3D; old Meep can misinfer periodic cells
+(set! resolution res)            ; set before the lattice (matches asym_rectangles.ctl)
 (set! geometry-lattice (make lattice (size (vector3 period period sz))))
 (set! pml-layers (list (make pml (thickness dpml) (direction Z))))
 (set! ensure-periodicity true)
-(set! k-point (vector3 0 0 0))   ; normal incidence; required for the periodic (x,y) cell
+; No k-point: normal incidence uses the default k=0 periodic boundary (real
+; fields). Matches the working asym_rectangles.ctl; an explicit k-point tripped
+; this old Meep's field constructor (new_meep_fields).
 
 (define substrate
   (make block (size (vector3 period period 2.0))
@@ -111,8 +114,6 @@
 (define fcen (* 0.5 (+ fmin fmax)))
 (define df (- fmax fmin))
 (define src-comp (if (= pol 0) Ex Ey))
-
-(set! resolution res)
 
 (define halfz (/ sz 2))
 (define src-z  (- halfz dpml 0.30))       ; 0.70  (vacuum, above the bars)
