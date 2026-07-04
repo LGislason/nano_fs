@@ -79,7 +79,7 @@
 (define dpml 1.0)
 (set! dimensions 3)              ; force 3D; old Meep can misinfer periodic cells
 (set! resolution res)            ; set before the lattice (matches asym_rectangles.ctl)
-(set! geometry-lattice (make lattice (size (vector3 period period sz))))
+(set! geometry-lattice (make lattice (size period period sz)))  ; 3 scalars, not vector3 (Meep 1.1.1 style)
 (set! pml-layers (list (make pml (thickness dpml) (direction Z))))
 (set! ensure-periodicity true)
 ; No k-point: normal incidence uses the default k=0 periodic boundary (real
