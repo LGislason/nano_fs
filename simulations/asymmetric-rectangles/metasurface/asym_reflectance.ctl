@@ -85,6 +85,10 @@
 (define resolution res)
 (set! pml-layers (list (make pml (thickness dpml) (direction Z))))
 (set! ensure-periodicity true)
+; This old Meep can't build REAL fields for an Ex-polarized source in the
+; periodic cell (new_meep_fields fails for pol=0 while pol=1/Ey works). Forcing
+; complex fields makes both polarizations construct.
+(set! force-complex-fields? true)
 
 (define substrate
   (make block (size (vector3 period period 2.0))
