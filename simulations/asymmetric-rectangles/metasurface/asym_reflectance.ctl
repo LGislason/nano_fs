@@ -77,6 +77,7 @@
 ; ----------------------------
 (define sz 4.0)
 (define dpml 1.0)
+(set! dimensions 3)              ; force 3D; old Meep can misinfer periodic cells
 (set! geometry-lattice (make lattice (size (vector3 period period sz))))
 (set! pml-layers (list (make pml (thickness dpml) (direction Z))))
 (set! ensure-periodicity true)
